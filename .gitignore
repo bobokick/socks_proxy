@@ -1,6 +1,7 @@
 .vs
 .vscode
-**/lib/*
-**/build/*
+build/
+lib/
+!third_parties/boost/build
 !third_parties/boost/build/lib
 *autogen*
