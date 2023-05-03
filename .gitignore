@@ -1,0 +1,6 @@
+.vs
+.vscode
+**/lib/*
+**/build/*
+!third_parties/boost/build/lib
+*autogen*

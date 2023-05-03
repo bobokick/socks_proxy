@@ -1,0 +1,126 @@
+﻿{
+  "buildPresets": [
+    {
+      "name": "windows-default",
+      "configurePreset": "windows-default"
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release",
+      "configuration": "Release"
+    }
+  ],
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-default",
+      "displayName": "windows default compile",
+      "description": "windows 默认编译",
+      "binaryDir": "${sourceDir}/build",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_C_FLAGS": "/DWIN32 /D_WINDOWS /W3",
+        "CMAKE_C_FLAGS_DEBUG": "/MDd /Zi /Ob0 /Od /RTC1",
+        "CMAKE_C_FLAGS_RELEASE": "/MD /O2 /Ob2 /DNDEBUG",
+        "CMAKE_C_STANDARD_LIBRARIES": "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib shlwapi.lib",
+        "CMAKE_CXX_FLAGS": "/DWIN32 /D_WINDOWS /W3 /GR /EHsc",
+        "CMAKE_CXX_FLAGS_DEBUG": "/MDd /Zi /Ob0 /Od /RTC1",
+        "CMAKE_CXX_FLAGS_RELEASE": "/MD /O2 /Ob2 /DNDEBUG",
+        "CMAKE_CXX_STANDARD_LIBRARIES": "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib shlwapi.lib",
+        "CMAKE_EXE_LINKER_FLAGS": "/machine:x64 /NODEFAULTLIB:MSVCRT",
+        "CMAKE_EXE_LINKER_FLAGS_DEBUG": "/debug /INCREMENTAL",
+        "CMAKE_EXE_LINKER_FLAGS_RELEASE": "/INCREMENTAL:NO",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/install",
+        "CMAKE_SHARED_LINKER_FLAGS": "/machine:x64 /NODEFAULTLIB:MSVCRT",
+        "CMAKE_SHARED_LINKER_FLAGS_DEBUG": "/debug /INCREMENTAL",
+        "CMAKE_SHARED_LINKER_FLAGS_RELEASE": "/INCREMENTAL:NO",
+        "CMAKE_STATIC_LINKER_FLAGS": "/machine:x64 /NODEFAULTLIB:MSVCRT",
+        "CMAKE_STATIC_LINKER_FLAGS_DEBUG": "/debug /INCREMENTAL",
+        "CMAKE_STATIC_LINKER_FLAGS_RELEASE": "/INCREMENTAL:NO"
+      },
+      "environment": {
+        //"MY_ENVIRONMENT_VARIABLE": "Test",
+        //"PATH": "${sourceDir}/boost/build/lib:$penv{PATH}"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": "Windows",
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+          //"intelliSenseMode": "linux-gcc-x86",
+          //"intelliSenseOptions": {
+          //  "useCompilerDefaults": true
+          //}
+        }
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows x64 Debug",
+      "description": "Windows x64 Debug mode",
+      "inherits": "windows-default",
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "cacheVariables": {
+        // 用于single-configuration generators (e.g. Makefile Generators or Ninja).
+        "CMAKE_BUILD_TYPE": "Debug",
+        // 用于multi-config generators (e.g. Visual Studio, Xcode, or Ninja Multi-Config).
+        "CMAKE_CONFIGURATION_TYPES": "Debug"
+        // "CMAKE_C_COMPILER": "icl",
+        // "CMAKE_CXX_COMPILER": "icl"
+      }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Windows x64 Release",
+      "description": "Windows x64 Release mode",
+      "inherits": "windows-default",
+      "generator": "Visual Studio 17 2022",
+      "architecture": {
+        "strategy": "set",
+        "value": "x64"
+      },
+      "cacheVariables": {
+        // 用于single-configuration generators (e.g. Makefile Generators or Ninja).
+        "CMAKE_BUILD_TYPE": "Release",
+        // 用于multi-config generators (e.g. Visual Studio, Xcode, or Ninja Multi-Config).
+        "CMAKE_CONFIGURATION_TYPES": "Release"
+        // "CMAKE_C_COMPILER": "icl",
+        // "CMAKE_CXX_COMPILER": "icl"
+      }
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-default",
+      "configurePreset": "windows-default",
+      "output": { "outputOnFailure": true },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug",
+      "inherits": "windows-default"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release",
+      "inherits": "windows-default"
+    }
+  ],
+  "version": 2
+}
