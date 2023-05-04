@@ -67,7 +67,7 @@
       "displayName": "Windows x64 Debug",
       "description": "Windows x64 Debug mode",
       "inherits": "windows-default",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 16 2019",
       "architecture": {
         "strategy": "set",
         "value": "x64"
@@ -86,7 +86,7 @@
       "displayName": "Windows x64 Release",
       "description": "Windows x64 Release mode",
       "inherits": "windows-default",
-      "generator": "Visual Studio 17 2022",
+      "generator": "Visual Studio 16 2019",
       "architecture": {
         "strategy": "set",
         "value": "x64"
