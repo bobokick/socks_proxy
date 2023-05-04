@@ -11,6 +11,8 @@ set(COMPILE_FOLDERS
 set(Boost_USE_STATIC_LIBS ON)
 # boost库静态链接runtime库
 set(Boost_USE_STATIC_RUNTIME OFF)
+# 要使用的boost编译的库版本
+set(Boost_COMPILER "vc143")
 set(BOOST_ROOT ${TP_ROOT_PATH}/boost/build)
 # set(BOOST_INCLUDEDIR ${BOOST_ROOT}/include)
 # 必须添加BOOST_LIBRARYDIR，否则not found

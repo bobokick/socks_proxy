@@ -68,8 +68,7 @@ int main()
     sample1();
     sample2();
 #ifdef SYSTEM_IS_Windows
-    // SET_DLL_FIND_DIR(BOOST_LIB_PATH);
-    //SetDllDirectory("C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib");
+    SET_DLL_FIND_DIR(BOOST_LIB_PATH);
 #endif
     return 0;
 }

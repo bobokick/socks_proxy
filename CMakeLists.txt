@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.20.3)
 project("socks_proxy")
 
 # 检测编译器
-message(STATUS "CMAKE_SYSTEM_NAME: {CMAKE_SYSTEM_NAME}")
+message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
 message(STATUS "CMAKE_C_COMPILER: ${CMAKE_C_COMPILER}")
 message(STATUS "CMAKE_CXX_COMPILER_ARCHITECTURE_ID: ${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}")
 message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
@@ -13,11 +13,11 @@ message(STATUS "CMAKE_MAKE_PROGRAM: ${CMAKE_MAKE_PROGRAM}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 
 # 根据操作系统增加编译选项
+set(CXX_STANDARD 17)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Windows")
     set(vs_install_dir $ENV{VS2020PATH})
 endif()
-set(CXX_STANDARD 17)
 
 # if(MSVC)
 #     set(variables 

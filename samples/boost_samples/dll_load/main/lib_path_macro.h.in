@@ -9,12 +9,10 @@
 #define LIB2_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen2/lib/libboostdll_test2.so"
 #else
 /// boost库文件位置，用于指定exe动态链接boost库的位置
-// #define _WIN32_WINNT 0x0502
-// #include <Windows.h>
-// "C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib"
-// #define BOOST_LIB_PATH "@THIRD_PARTY_ROOT@/boost/build/lib"
-//#define BOOST_LIB_PATH "C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib"
-// #define SET_DLL_FIND_DIR(PATH) SetDllDirectory(PATH)
+#define _WIN32_WINNT 0x0502
+#include <Windows.h>
+#define BOOST_LIB_PATH "@TP_ROOT_PATH@/boost/build/lib"
+#define SET_DLL_FIND_DIR(PATH) SetDllDirectory(PATH)
 /// 库文件1的路径
 #define LIB1_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen1/lib/boostdll_test1.dll"
 /// 库文件2的路径
