@@ -13,7 +13,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 # 要使用的boost编译的库版本
 set(Boost_COMPILER "vc142")
-set(BOOST_ROOT ${TP_ROOT_PATH}/boost/build)
+set(BOOST_ROOT ${TP_ROOT_PATH}/boost/build/${CMAKE_BUILD_TYPE})
 # set(BOOST_INCLUDEDIR ${BOOST_ROOT}/include)
 # 必须添加BOOST_LIBRARYDIR，否则not found
 #set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)

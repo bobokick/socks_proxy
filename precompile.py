@@ -43,7 +43,9 @@ class BuildDirector:
     
     # 输出编译信息
     def outputInfo(self):
+        print("\n")
         print(f"third_party_path: {self.__current_build_mode__.third_party_path_}")
+        print(f"target_path: {self.__current_build_mode__.target_path_}")
         print(f"build_path: {self.__current_build_mode__.build_path_}")
         print(f"install_path: {self.__current_build_mode__.install_path_}")
         print(f"system_name: {self.__current_build_mode__.system_name_}")
@@ -59,27 +61,28 @@ class BaseBuilder(AbstractBuilder):
     # 读取参数进行路径等数据的初始化
     def __init__(self, target_path : str, system_name: str, cxx_compiler_id: str, build_tool : str, build_type : str) -> None:
         self.original_target_name_ = target_path
-        target_path = os.path.abspath(target_path)
-        self.third_party_path_ = os.path.join(target_path, "..")
-        self.build_path_ = os.path.join(target_path, "build")
+        self.target_path_ = os.path.abspath(target_path)
+        self.third_party_path_ = os.path.join(self.target_path_, "..")
+        self.build_type_ = build_type
+        self.build_path_ = os.path.normpath(os.path.join(self.target_path_, f"build/{self.build_type_}"))
         self.install_path_ = os.path.normpath(f'{self.build_path_}/install')
         self.system_name_ = system_name
         self.cxx_compiler_id_ = cxx_compiler_id
         self.build_tool_ = build_tool
-        self.build_type_ = build_type
         self.cmd_concat_flag_ = '&' if system_name.find("Windows") != -1 else ';'
         if self.system_name_.find("Windows") != -1:
             # 微软c++工具集的各种环境设置，包括msbuild，nmake等构建工具
             self.msbuild_setenv_path_ = os.path.normpath(f"{os.getenv('VS2019INSTALLDIR')}/VC/Auxiliary/Build/vcvarsamd64_x86.bat")
             # intel编译器各种环境设置
             self.icl_setenv_path_ = os.path.normpath(f"{os.getenv('ONEAPI_ROOT')}/setvars.bat")
-        print(f"third_party_path: {self.third_party_path_}")
-        print(f"build_path: {self.build_path_}")
-        print(f"install_path: {self.install_path_}")
-        print(f"system_name: {self.system_name_}")
-        print(f"cxx_compiler_id: {self.cxx_compiler_id_}")
-        print(f"build_tool: {self.build_tool_}")
-        print(f"build_type: {self.build_type_}")
+        # print(f"third_party_path: {self.third_party_path_}")
+        # print(f"target_path: {self.target_path_}")
+        # print(f"build_path: {self.build_path_}")
+        # print(f"install_path: {self.install_path_}")
+        # print(f"system_name: {self.system_name_}")
+        # print(f"cxx_compiler_id: {self.cxx_compiler_id_}")
+        # print(f"build_tool: {self.build_tool_}")
+        # print(f"build_type: {self.build_type_}")
 
     def preCommand(self) -> None:
         pass
@@ -99,11 +102,11 @@ class BaseBuilder(AbstractBuilder):
         os.makedirs(self.build_path_, exist_ok=True)
         os.chdir(self.build_path_)
         # cmake配置选项
-        self.cmake_args_ = ["cmake", "..", f"-DCMAKE_BUILD_TYPE={self.build_type_}", f"-DCMAKE_CONFIGURATION_TYPES={self.build_type_}"]
+        self.cmake_args_ = ["cmake", "-S", f"{self.target_path_}", f"-DCMAKE_BUILD_TYPE={self.build_type_}", f"-DCMAKE_CONFIGURATION_TYPES={self.build_type_}"]
         # 其他配置
         self.setEnvBeforeConfig()
         self.configurateOthers()
-        print(f"cmake_args: {self.cmake_args_}")
+        # print(f"cmake_args: {self.cmake_args_}")
         # 生成构建文件
         ret = subprocess.run(self.cmake_args_, shell=True)
         if ret.returncode != 0:
@@ -124,11 +127,11 @@ class BaseBuilder(AbstractBuilder):
         os.makedirs(self.build_path_, exist_ok=True)
         os.chdir(self.build_path_)
         # 默认构建选项，直接调用构建配置文件命令中默认或指定的构建工具进行构建
-        self.make_args_ = ["cmake", "--build", ".", "-j", "--config", self.build_type_]
+        self.make_args_ = ["cmake", "--build", f"{self.build_path_}", "--config", self.build_type_, "-j"]
         # 其他构建
         self.setEnvBeforeBuild()
         self.buildOthers()
-        print(f"make_args: {self.make_args_}")
+        # print(f"make_args: {self.make_args_}")
         # 进行构建
         subprocess.run(self.make_args_, shell=True)
 
@@ -168,8 +171,9 @@ class CommonBuilder(BaseBuilder):
     def configurateOthers(self) -> None:
         pass
 
+    # 构建中的特殊步骤，默认为安装相关的头库文件到指定位置。
     def buildOthers(self) -> None:
-        pass
+        self.make_args_ += [self.cmd_concat_flag_, "cmake", "--install", f"{self.build_path_}", "--config", self.build_type_, "--prefix", f"{self.install_path_}"]
 
 
 # 用intel编译器时的编译建造者
@@ -186,6 +190,7 @@ class IntelCompilerBuilder(CommonBuilder):
             self.make_args_.insert(0, self.cmd_concat_flag_)
             self.make_args_.insert(0, self.icl_setenv_path_)
 
+
 # googletest库的建造者
 class GoogletestBuilder(IntelCompilerBuilder):
     def setEnvBeforeConfig(self) -> None:
@@ -197,11 +202,12 @@ class GoogletestBuilder(IntelCompilerBuilder):
         # 此时在项目的MD/MDd和MT/MTd参数下都能使用生成的gtest的任何static/shared库
         self.cmake_args_.append("-Dgtest_force_shared_crt=1")
 
+
 # boost库的建造者
 class BoostBuilder(CommonBuilder):
     # boost的构建配置
     def configurateOthers(self) -> None:
-        self.cmake_args_ = ["cd", os.path.normpath(f"{self.build_path_}/.."), self.cmd_concat_flag_]
+        self.cmake_args_ = ["cd", f"{self.target_path_}", self.cmd_concat_flag_]
         if self.system_name_.find("Windows") != -1:
             self.cmake_args_.append(os.path.normpath(".\\bootstrap.bat"))
         elif self.system_name_.find("Linux") != -1:
@@ -209,7 +215,7 @@ class BoostBuilder(CommonBuilder):
 
     # boost的构建
     def buildOthers(self) -> None:
-        self.make_args_ = ["cd", os.path.normpath(f"{self.build_path_}/..")]
+        self.make_args_ = ["cd", f"{self.target_path_}"]
         compile_args = [self.cmd_concat_flag_, os.path.normpath("./b2"), f"--prefix={self.build_path_}", f"--stagedir={self.build_path_}", "--without-python", "--without-graph_parallel", "--without-mpi", f"variant={self.build_type_.lower()}", "address-model=64", "architecture=x86", "threading=multi"]
         static_compile_args = ["link=static", "runtime-link=shared"]
         shared_compile_args = ["link=shared", "runtime-link=shared"]
@@ -227,11 +233,6 @@ class BoostBuilder(CommonBuilder):
 
 # hdf5/hdf5_rev库的建造者
 class HDF5Builder(IntelCompilerBuilder):
-    # Windows上需要先安装perl
-    def preCommand(self) -> None:
-        if self.system_name_.find("Windows") != -1:
-            self.installPerlOnWindows(os.path.normpath(f"{self.build_path_}/../strawberry-perl-5.32.1.1-64bit.msi"), os.path.normpath(f"{os.getenv('LOCALAPPDATA')}/Programs/strawberry-perl"))
-
     # 只用到intel的编译环境，因为需要用到intel fortran编译器
     def setEnvBeforeConfig(self) -> None:
         if self.system_name_.find("Windows") != -1 and self.cxx_compiler_id_.find("intel") != -1:
@@ -244,11 +245,7 @@ class HDF5Builder(IntelCompilerBuilder):
     def configurateOthers(self) -> None:
         # 配置同时编译静态和动态库
         # 指定v110版本的api接口
-        self.cmake_args_ += ["-C", os.path.normpath("../config/cmake/cacheinit.cmake"), "-DBUILD_SHARED_LIBS:BOOL=ON", "-DBUILD_TESTING:BOOL=ON", "-DHDF5_BUILD_TOOLS:BOOL=ON", "-DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF", "-DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF", "-DDEFAULT_API_VERSION=v110"]
-    
-    # hdf5/hdf5_rev的构建
-    def buildOthers(self) -> None:
-        self.make_args_ += [self.cmd_concat_flag_, "cmake", "--install", self.build_path_, "--config", self.build_type_, "--prefix", self.install_path_]
+        self.cmake_args_ += ["-C", os.path.normpath(f"{self.target_path_}/config/cmake/cacheinit.cmake"), "-DBUILD_SHARED_LIBS:BOOL=ON", "-DBUILD_TESTING:BOOL=ON", "-DHDF5_BUILD_TOOLS:BOOL=ON", "-DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF", "-DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF", "-DDEFAULT_API_VERSION=v110"]
 
 
 # breakpad库的建造者
@@ -263,12 +260,12 @@ class OpensslBuilder(CommonBuilder):
     # Windows上需要先安装perl
     def preCommand(self) -> None:
         if self.system_name_.find("Windows") != -1:
-            self.installPerlOnWindows(os.path.normpath(f"{self.build_path_}/../strawberry-perl-5.32.1.1-64bit.msi"), os.path.normpath(f"{os.getenv('LOCALAPPDATA')}/Programs/strawberry-perl"))
+            self.installPerlOnWindows(os.path.normpath(f"{self.target_path_}/strawberry-perl-5.32.1.1-64bit.msi"), os.path.normpath(f"{os.getenv('LOCALAPPDATA')}/Programs/strawberry-perl"))
 
     # openssl的构建配置
     def configurateOthers(self) -> None:
         # 读取openssl的配置以进行构建
-        self.cmake_args_ = ["perl", os.path.normpath(f"../Configure"), "VC-WIN32", "no-asm", "no-shared", f"--prefix={self.build_path_}"]
+        self.cmake_args_ = ["perl", os.path.normpath(f"{self.target_path_}/Configure"), "VC-WIN32", "no-asm", "no-shared", f"--prefix={self.build_path_}"]
     
     # openssl的构建
     def buildOthers(self) -> None:
@@ -280,7 +277,7 @@ class LibeventBuilder(IntelCompilerBuilder):
     # libevent的构建配置
     def configurateOthers(self) -> None:
         # 读取openssl的配置以进行构建
-        self.cmake_args_.append(f"-DOPENSSL_ROOT_DIR={os.path.normpath(self.third_party_path_+'/openssl/build')}")
+        self.cmake_args_.append(f"-DOPENSSL_ROOT_DIR={os.path.normpath(self.third_party_path_+'/openssl/build/'+self.build_type_)}")
 
 
 # thrift库的建造者
@@ -288,17 +285,17 @@ class ThriftBuilder(CommonBuilder):
     # 库中已存在build文件夹，因此改为build_
     def __init__(self, target_path : str, system_name: str, cxx_compiler_id: str, build_tool : str, build_type : str) -> None:
         super().__init__(target_path, system_name, cxx_compiler_id, build_tool, build_type)
-        target_path = os.path.abspath(target_path)
-        self.build_path_ = os.path.join(target_path, "build_")
+        self.target_path_ = os.path.abspath(target_path)
+        self.build_path_ = os.path.normpath(os.path.join(self.target_path_, f"build_/{self.build_type_}"))
         self.install_path_ = os.path.normpath(f'{self.build_path_}/install')
-        print(f"new build_path: {self.build_path_}")
-        print(f"new install_path: {self.install_path_}")
+        # print(f"new build_path: {self.build_path_}")
+        # print(f"new install_path: {self.install_path_}")
 
     # thrift的构建配置
     def configurateOthers(self) -> None:
         if self.system_name_.find("Windows") != -1:
             os.environ['Path'] = os.getenv('Path') + os.pathsep + os.path.normpath(self.third_party_path_+"/win_flex_bison")
-        self.cmake_args_ += [f"-DBOOST_ROOT={os.path.normpath(self.third_party_path_+'/boost/build')}", f"-DBOOST_LIBRARYDIR={os.path.normpath(self.third_party_path_+'/boost/build/lib')}", f"-DOPENSSL_ROOT_DIR={os.path.normpath(self.third_party_path_+'/openssl')}", f"-DLIBEVENT_ROOT={os.path.normpath(self.third_party_path_+'/libevent')}"]
+        self.cmake_args_ += [f"-DBOOST_ROOT={os.path.normpath(self.third_party_path_+'/boost/build/'+self.build_type_)}", f"-DBOOST_LIBRARYDIR={os.path.normpath(self.third_party_path_+'/boost/build/'+self.build_type_+'/lib')}", f"-DOPENSSL_ROOT_DIR={os.path.normpath(self.third_party_path_+'/openssl')}", f"-DLIBEVENT_ROOT={os.path.normpath(self.third_party_path_+'/libevent')}"]
 
 
 # 三方库编译类
@@ -311,7 +308,7 @@ class ModuleCompilation:
         for builder in ModuleCompilation.__builders__:
             builder_name = builder.__name__.replace("Builder", "").lower()
             if target_path.find(builder_name) != -1:
-                print(builder_name)
+                # print(builder_name)
                 has_found = True
                 ModuleCompilation.executeBuild(target_path, system_name, cxx_compiler_id, build_tool, build_type, builder)
                 break

@@ -10,7 +10,7 @@ set(compile_type SHARED)
 add_library(${PROJECT_NAME} ${compile_type} gen.cc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-
+    ${TP_ROOT_PATH}/boost
 )
 target_link_directories(${PROJECT_NAME} PRIVATE 
 
