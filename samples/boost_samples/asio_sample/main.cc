@@ -6,7 +6,8 @@ int main()
         // usingTimerSynchronously, 
         // usingTimerAsynchronously, 
         // bindingArgsToCompletionHandler,
-        usingMemberFunctionAsCompletionHandler
+        // usingMemberFunctionAsCompletionHandler,
+        synchronisingCompletionHandlersInMultithreadedPrograms
     };
     for (auto p: pArray)
         p();
