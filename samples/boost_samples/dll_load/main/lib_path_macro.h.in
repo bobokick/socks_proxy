@@ -7,16 +7,24 @@
 #define LIB1_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen1/lib/libboostdll_test1.so"
 /// 库文件2的路径
 #define LIB2_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen2/lib/libboostdll_test2.so"
+/// 库文件3的路径
+#define LIB3_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen3/lib/libboostdll_test3.a"
+#define INCLUDE3_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen3/gen.h"
 #else
 /// boost库文件位置，用于指定exe动态链接boost库的位置
 #define _WIN32_WINNT 0x0502
 #include <Windows.h>
+// "C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib"
 #define BOOST_LIB_PATH "@TP_ROOT_PATH@/boost/build/lib"
+//#define BOOST_LIB_PATH "C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib"
 #define SET_DLL_FIND_DIR(PATH) SetDllDirectory(PATH)
 /// 库文件1的路径
 #define LIB1_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen1/lib/boostdll_test1.dll"
 /// 库文件2的路径
 #define LIB2_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen2/lib/boostdll_test2.dll"
+/// 库文件3的路径
+#define LIB3_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen3/lib/boostdll_test3.lib"
+#define INCLUDE3_PATH "@CMAKE_CURRENT_SOURCE_DIR@/../gen3/gen.h"
 #endif
 
 #endif

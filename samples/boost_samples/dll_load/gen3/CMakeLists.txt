@@ -1,26 +1,23 @@
 
 cmake_minimum_required(VERSION 3.8)
 
-project(boostdll_test1)
+project(boostdll_test3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(compile_type SHARED)
+set(compile_type STATIC)
 
 add_library(${PROJECT_NAME} ${compile_type} gen.cc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${TP_ROOT_PATH}/boost
+
 )
 target_link_directories(${PROJECT_NAME} PRIVATE 
 
 )
-target_link_libraries(${PROJECT_NAME} 
-    Boost::filesystem
+target_link_libraries(${PROJECT_NAME} PRIVATE
+
 )
-# target_link_options(${PROJECT_NAME} PRIVATE
-#     -Wl,--no-undefined
-# )
 
 # 使用生成器表达式以及target_properties指定target生成的位置，
 # 避免msbuild等生成器会自动加上Debug/Realease等后缀

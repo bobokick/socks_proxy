@@ -34,6 +34,18 @@ DLL_EXPORT constexpr int num_about_cpp_standard_version = 17;
 //写函数或变量的别名
 BOOST_DLL_ALIAS(num_about_cpp_standard_version, cpp_ver)
 
+DLL_EXPORT void noImplement(int);
+DLL_EXPORT void Implement(int) {}
+
+extern const int arrays[10];
+DLL_EXPORT const int arrays2[10] = {};
+
+// DLL_EXPORT void useNoImplement() 
+// {
+//     auto ref = arrays;
+//     noImplement(0);
+// }
+
 // NOLINTEND
 
 #endif // !BOOST_GEN_LIB1

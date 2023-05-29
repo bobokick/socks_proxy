@@ -2,6 +2,7 @@
 #include <string>
 #include <boost/dll.hpp>
 #include "lib_path_autogen.h"
+#include INCLUDE3_PATH
 
 using namespace boost;
 
@@ -63,12 +64,19 @@ void sample2()
     //show_info2();
 }
 
+void sample3()
+{
+    funcShow();
+}
+
 int main()
 {
     sample1();
     sample2();
+    sample3();
 #ifdef SYSTEM_IS_Windows
     SET_DLL_FIND_DIR(BOOST_LIB_PATH);
+    //SetDllDirectory("C:\\Users\\yu.he\\Documents\\code\\pera_core\\third_party\\boost\\build\\lib");
 #endif
     return 0;
 }

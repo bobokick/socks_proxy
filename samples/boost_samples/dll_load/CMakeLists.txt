@@ -3,6 +3,7 @@
 set(COMPILE_FOLDERS
     gen1
     gen2
+    gen3
     main
 )
 
