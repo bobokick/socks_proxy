@@ -10,8 +10,8 @@
 // #define _WIN32_WINNT 0x0A00
 #endif
 
-#ifndef BOOST_ASIO_SAMPLE_H
-#define BOOST_ASIO_SAMPLE_H
+#ifndef BOOST_ASIO_SAMPLE_BASIC_H
+#define BOOST_ASIO_SAMPLE_BASIC_H
 
 void usingTimerSynchronously()
 {
@@ -145,4 +145,4 @@ void synchronisingCompletionHandlersInMultithreadedPrograms()
     t.join();
 }
 
-#endif // !BOOST_ASIO_SAMPLE_H
+#endif // !BOOST_ASIO_SAMPLE_BASIC_H
