@@ -2,7 +2,7 @@
 # 设置需要编译的子文件夹
 set(COMPILE_FOLDERS
     basic_sample
-    # net
+    net
 )
 
 # 寻找boost头文件，库文件等路径

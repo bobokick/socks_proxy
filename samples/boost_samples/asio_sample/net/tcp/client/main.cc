@@ -21,9 +21,10 @@ void tcpClient(std::string server_host)
             // 用于接收数据
             std::vector<char> buff;
             boost::system::error_code error;
-            // 接收server发送的数据
+            // 接收server发送的数据，并将其写入到buff
+            // 返回接收的字节大小
             size_t len = socket.read_some(boost::asio::buffer(buff), error);
-            // 全部接收完毕时，取消关闭
+            // 全部接收完毕时，关闭连接
             if (error == boost::asio::error::eof)
                 break; // Connection closed cleanly by peer.
             else if (error)
