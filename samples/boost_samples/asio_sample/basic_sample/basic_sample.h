@@ -2,6 +2,7 @@
 #include <string>
 #include <chrono>
 #include <vector>
+#include <functional>
 #include <boost/asio.hpp>
 #include <boost/thread/thread.hpp>
 #ifdef _WIN32
