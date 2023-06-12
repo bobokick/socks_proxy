@@ -20,13 +20,17 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../gen3/lib
+
 )
 
 target_link_libraries(${PROJECT_NAME} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/../gen3/lib/$<$<PLATFORM_ID:Linux>:lib>boostdll_test3$<IF:$<PLATFORM_ID:Linux>,.a,.lib>
     Boost::filesystem
     $<$<PLATFORM_ID:Linux>:dl>
+)
+
+add_dependencies(${PROJECT_NAME} 
+    boostdll_test_lib1
+    boostdll_test_lib2
 )
 
 message(STATUS ${Boost_LIBRARIES})

@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.8)
 
-project(boostdll_test1)
+project(boostdll_test_lib1)
 
 set(CMAKE_CXX_STANDARD 11)
 
