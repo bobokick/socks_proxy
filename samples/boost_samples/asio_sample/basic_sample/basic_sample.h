@@ -32,6 +32,7 @@ void usingTimerAsynchronously()
     { std::cout << "Hello, usingTimerAsynchronously!" << std::endl; };
     boost::asio::io_context io;
     boost::asio::steady_timer t(io, std::chrono::seconds(5));
+    // 进行异步等待，直接进行返回
     t.async_wait(print);
     std::cout << "start wait for the timer expiration!" << std::endl;
     // 阻塞，直到当前线程的所有work完成后或者io停止后才会返回。
