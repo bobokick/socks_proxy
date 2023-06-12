@@ -80,8 +80,8 @@ class TcpServer
         TcpConnection::TcpPointer new_connection = TcpConnection::create(io_context_);
         // 输出等待连接请求信息
         std::cout << "wait for connecting in port " << listen_port_ << std::endl;
-        // 绑定套接字（将服务的套接字地址与该套接字连接起来），并进行监听（将套接字转换为监听套接字），并进行阻塞用于等待client的连接请求。
-        // 异步操作，当建立连接时，进行线程分发操作，被分发的线程来调用该指定的函数，当前线程直接返回。
+        // 绑定套接字（将服务的套接字地址与该套接字连接起来），并进行监听（将套接字转换为监听套接字），。
+        // 异步操作，此时不进行阻塞来等待client的连接请求。当建立连接时，进行线程分发操作，被分发的线程来调用该指定的函数，当前线程直接返回。
         acceptor_.async_accept(new_connection->getSocket(), std::bind(&TcpServer::handleAccept, this, new_connection, std::placeholders::_1));
         std::cout << "connection has built!" << std::endl;
     }
