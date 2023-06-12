@@ -1,10 +1,10 @@
+#ifndef BOOST_GEN_LIB2_H_
+#define BOOST_GEN_LIB2_H_
+
 #include <iostream>
 #include <string>
 #include <cstdio>
 #include <boost/dll.hpp>
-
-#ifndef BOOST_GEN_LIB2
-#define BOOST_GEN_LIB2
 
 // NOLINTBEGIN
 
@@ -36,4 +36,4 @@ BOOST_DLL_ALIAS(num_about_cpp_standard_version, cpp_ver_alias)
 
 // NOLINTEND
 
-#endif // !BOOST_GEN_LIB2
+#endif // !BOOST_GEN_LIB2_H_

@@ -1,7 +1,5 @@
 #include "server.h"
 
-using boost::asio::ip::tcp;
-
 // 生成daytime协议数据
 std::string makeDaytimeString()
 {

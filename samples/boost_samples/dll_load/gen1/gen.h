@@ -1,10 +1,10 @@
+#ifndef BOOST_GEN_LIB1_H_
+#define BOOST_GEN_LIB1_H_
+
 #include <iostream>
 #include <string>
 #include <cstdio>
 #include <boost/dll.hpp>
-
-#ifndef BOOST_GEN_LIB1
-#define BOOST_GEN_LIB1
 
 // NOLINTBEGIN
 
@@ -48,4 +48,4 @@ DLL_EXPORT const int arrays2[10] = {};
 
 // NOLINTEND
 
-#endif // !BOOST_GEN_LIB1
+#endif // !BOOST_GEN_LIB1_H_

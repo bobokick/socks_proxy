@@ -1,3 +1,6 @@
+#ifndef BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H_
+#define BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H_
+
 #include <iostream>
 #include <string>
 #include <ctime>
@@ -10,8 +13,7 @@
 // #define _WIN32_WINNT 0x0A00
 #endif
 
-#ifndef BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H
-#define BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H
+using boost::asio::ip::tcp;
 
 // 生成daytime协议数据
 std::string makeDaytimeString();
@@ -91,4 +93,4 @@ public:
     }
 };
 
-#endif // !BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H
+#endif // !BOOST_ASIO_SAMPLE_NET_TCP_SERVER_ASYNCHRONOUS_H_

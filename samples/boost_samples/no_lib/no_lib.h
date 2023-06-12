@@ -1,3 +1,6 @@
+#ifndef BOOST_NO_LIB_H_
+#define BOOST_NO_LIB_H_
+
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -5,12 +8,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/lambda/lambda.hpp>
 
-#ifndef BOOST_NO_LIB_H
-#define BOOST_NO_LIB_H
-
-double add(const std::string& intNum, const std::string& douNum)
+double add(const std::string& int_num, const std::string& dou_num)
 {
-    return boost::lexical_cast<int>(intNum) + boost::lexical_cast<double>(douNum);
+    return boost::lexical_cast<int>(int_num) + boost::lexical_cast<double>(dou_num);
 }
 
 int main()
@@ -20,4 +20,4 @@ int main()
     return 0;
 }
 
-#endif // !BOOST_NO_LIB_H
+#endif

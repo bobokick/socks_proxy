@@ -1,3 +1,6 @@
+#ifndef BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
+#define BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -9,9 +12,6 @@
 // #define _WIN32_WINNT 0x0A00
 #endif
 
-#ifndef BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H
-#define BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H
-
 void tcpClient(std::string server_host);
 
-#endif // !BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H
+#endif // !BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
