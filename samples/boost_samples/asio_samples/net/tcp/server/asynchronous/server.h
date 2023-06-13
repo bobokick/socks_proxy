@@ -66,9 +66,11 @@ class TcpServer
     // 它服务客户端请求时，然后会继续调用startAccept进行下一个接收操作。
     void handleAccept(TcpConnection::TcpPointer new_connection, const boost::system::error_code& error)
     {
+        // std::cout << "entered function handleAccept" << std::endl;
         // 无错误时就开始处理请求
         if (!error)
         {
+            // std::cout << "no error" << std::endl;
             new_connection->start();
         }
         // 继续等待client连接请求
@@ -81,9 +83,9 @@ class TcpServer
         // 输出等待连接请求信息
         std::cout << "wait for connecting in port " << listen_port_ << std::endl;
         // 绑定套接字（将服务的套接字地址与该套接字连接起来），并进行监听（将套接字转换为监听套接字），。
-        // 异步操作，此时不进行阻塞来等待client的连接请求。当建立连接时，进行线程分发操作，被分发的线程来调用该指定的函数，当前线程直接返回。
+        // 异步操作，此时不进行阻塞来等待client的连接请求。当调用该函数时，进行线程分发操作，当前线程直接返回，被分发的线程来进行阻塞等待并在连接后调用指定的函数TcpServer::handleAccept。
         acceptor_.async_accept(new_connection->getSocket(), std::bind(&TcpServer::handleAccept, this, new_connection, std::placeholders::_1));
-        std::cout << "connection has built!" << std::endl;
+        // std::cout << "connection has built!" << std::endl;
     }
 public:
     // 初始化监听对象来监听tcp ipv4上给定端口的连接请求

@@ -51,6 +51,7 @@ void bindingArgsToCompletionHandler()
             {
                 std::cout << ++count << std::endl;
                 // 设置计时器的总过期时间，过期时间从计时器建立就开始计时，因为需要每次加1s，否则会直接过期。
+                // 用std::ref是用于引用传递，否则只是值传递
                 timer.expires_at(timer.expiry() + std::chrono::seconds(1));
                 timer.async_wait(std::bind(*this, std::placeholders::_1, std::ref(timer), std::ref(count)));
             }
@@ -61,6 +62,7 @@ void bindingArgsToCompletionHandler()
     int count = 0;
     boost::asio::io_context io;
     boost::asio::steady_timer t(io, std::chrono::seconds(1));
+    // 用std::ref是用于引用传递，否则只是值传递
     t.async_wait(std::bind(Print{}, std::placeholders::_1, std::ref(t), std::ref(count)));
     std::cout << "start wait for the timer expiration!" << std::endl;
     io.run();
@@ -117,6 +119,7 @@ void synchronisingCompletionHandlersInMultithreadedPrograms()
                 std::cout << "Timer" << number+1 << ": " << ++count_ << std::endl;
                 // 设置计时器的总过期时间，过期时间从计时器建立就开始计时，因为需要每次加1s，否则会直接过期。
                 timer_list_[number].expires_at(timer_list_[number].expiry() + std::chrono::seconds(1));
+                // boost::asio::bind_executor返回一个会自动分发所包含的任务的新的句柄
                 timer_list_[number].async_wait(boost::asio::bind_executor(strand_, std::bind(&Printer::print, this, number)));
                 // timer_list_[number].async_wait(std::bind(&Printer::print, this, number));
             }
