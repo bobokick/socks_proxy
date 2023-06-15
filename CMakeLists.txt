@@ -61,6 +61,8 @@ foreach(module_path ${precompile_module_path})
     endif()
 endforeach()
 
+add_definitions("-Wall -g")
+
 # 开启ctest测试，生成Makefile以及相应测试文件后，就可以运行make test来执行用add_test添加的测试了。
 #enable_testing()
 

@@ -13,14 +13,14 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 # 要使用的boost编译的库版本
 set(Boost_COMPILER "vc142")
 set(BOOST_ROOT ${TP_ROOT_PATH}/boost/build/${CMAKE_BUILD_TYPE})
-# set(BOOST_INCLUDEDIR ${BOOST_ROOT}/include)
 # 必须添加BOOST_LIBRARYDIR，否则not found
-#set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)
+# set(BOOST_INCLUDEDIR ${TP_ROOT_PATH}/boost/boost)
+# set(BOOST_LIBRARYDIR ${BOOST_ROOT}/lib)
 # set(Boost_NO_SYSTEM_PATHS ON)
 # set(Boost_THREADAPI "win32")
 # set(Boost_ARCHITECTURE "-x64")
 # set(Boost_DEBUG OFF)
-find_package(Boost 1.76.0 REQUIRED
+find_package(Boost REQUIRED
    COMPONENTS system filesystem thread 
    )
 if(Boost_FOUND)

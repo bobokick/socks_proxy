@@ -144,10 +144,12 @@ void synchronisingCompletionHandlersInMultithreadedPrograms()
     boost::asio::io_context io;
     // 创建多个异步timer
     Printer p(io, 5, 30);
+    auto thread_call = [](boost::asio::io_context& io) { io.run(); };
     // 开始一个新的thread用来io_context::run（无什么作用）
-    boost::thread t(boost::bind(&boost::asio::io_context::run, &io));
+    //boost::thread t(boost::bind(&boost::asio::io_context::run, &io));
+    //std::thread t(thread_call, io);
     io.run();
-    t.join();
+    //t.join();
 }
 
 #endif // !BOOST_ASIO_SAMPLE_BASIC_H_
