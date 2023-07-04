@@ -1,0 +1,298 @@
+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
+
+
+
+intel编译器不支持ninja和nmake构建器。
+intel编译器不兼容hdf5和openssl的编译
+
+
+python re_precompile.py third_party/googletest Windows intel devenv Debug
+
+windows cli cmake compile(in project root path):
+# windows-debug windows-release
+cmake -S . -B build --preset windows-debug --fresh
+cmake --build build --preset windows-debug -j
+
+
+intel compiler:
+# "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+cmake .. -DCMAKE_C_COMPILER="icl" -DCMAKE_CXX_COMPILER="icl" -T "Intel C++ Compiler 2022"
+cmake --build . --config Debug
+
+
+boost compile（需要编译iw的shared版和msvc的static版）:
+.\bootstrap.bat
+"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+.\b2 --prefix=D:\Documents\code\pera_core\third_party\boost\build --stagedir=D:\Documents\code\pera_core\third_party\boost\build --without-python --without-graph_parallel --without-mpi variant=debug link=static runtime-link=shared address-model=64 architecture=x86 threading=multi install
+.\b2 --prefix=D:\Documents\code\pera_core\third_party\boost\build --stagedir=D:\Documents\code\pera_core\third_party\boost\build --without-python --without-graph_parallel --without-mpi variant=debug link=shared runtime-link=shared address-model=64 architecture=x86 threading=multi stage toolset=intel-2021.1-vc14.1
+
+
+hdf5 compile（包含fortran）:
+"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+(notice the sequence) cmake .. -C ../config/cmake/cacheinit.cmake -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=ON -DHDF5_BUILD_TOOLS:BOOL=ON -DHDF5_ENABLE_SZIP_SUPPORT:BOOL=OFF -DHDF5_ENABLE_Z_LIB_SUPPORT:BOOL=OFF -DDEFAULT_API_VERSION=v110
+(need in setvars.bat) cmake --build . --config Debug
+cmake --install . --config Debug --prefix ".\install"
+(opt, need in setvars.bat) ctest . -C Debug (all passed in msvc)
+
+
+kdtree2 compile :
+#C:\Program Files (x86)\Intel\oneAPI\compiler\2022.0.3\windows\bin\intel64\ifort.exe
+(requirement for executing fortran kdtree2 test)"C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+# -DBUILD_SHARED_LIBS=ON
+cmake .. -DCMAKE_C_COMPILER="icl" -DCMAKE_CXX_COMPILER="icl" -DCMAKE_Fortran_COMPILER="ifort" -T "Intel C++ Compiler 2022"
+cmake --build . --config Debug
+
+
+openssl compile :
+msiexec /i D:\Downloads\strawberry-perl-5.32.1.1-64bit.msi INSTALLDIR=D:\apps\straw /qb! /l*v install.log
+perl ..\Configure VC-WIN32 no-asm no-shared --prefix=D:\Documents\code\pera_core\third_party\openssl\build
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
+nmake
+(administrator) nmake install
+(opt) nmake VERBOSE=1 test
+
+
+libevent compile :
+cmake .. -DOPENSSL_ROOT_DIR=D:\Documents\code\pera_core\third_party\openssl\build
+
+
+thrift compile :
+set PATH=%PATH%;D:\Documents\code\pera_core\third_party\win_flex_bison
+# "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
+# cmake .. -DBOOST_ROOT=D:\Documents\code\pera_core\third_party\boost\build -DBOOST_LIBRARYDIR=D:\Documents\code\pera_core\third_party\boost\build\lib -DOPENSSL_ROOT_DIR=D:\Documents\code\pera_core\third_party\openssl -DLIBEVENT_ROOT=D:\Documents\code\pera_core\third_party\libevent -DCMAKE_C_COMPILER="icl" -DCMAKE_CXX_COMPILER="icl" -T "Intel C++ Compiler 2022"
+(need boost static lib of msvc ver)cmake .. -DBOOST_ROOT=D:\Documents\code\pera_core\third_party\boost\build -DBOOST_LIBRARYDIR=D:\Documents\code\pera_core\third_party\boost\build\lib -DOPENSSL_ROOT_DIR=D:\Documents\code\pera_core\third_party\openssl -DLIBEVENT_ROOT=D:\Documents\code\pera_core\third_party\libevent
+cmake --build . --config Debug
+
+
+用户宏：
+$(THRIFT_ROOT_DIR) $(ProjectDir)\..\..
+$(THIRD_PARTY)	$(THRIFT_ROOT_DIR)\..
+$(BOOST_ROOT)	$(THIRD_PARTY)\boost\build
+$(OPENSSL_ROOT_DIR)	$(THIRD_PARTY)\openssl
+$(LIBEVENT_ROOT) $(THIRD_PARTY)\libevent
+
+包含目录：
+libthrift\libthriftnb: 
+$(ProjectDir)\src\;
+$(ProjectDir)\src\thrift\windows\;
+$(BOOST_ROOT)\include\boost-1_76;
+$(BOOST_ROOT)\;
+$(LIBEVENT_ROOT)\WIN32-Code\;
+$(LIBEVENT_ROOT)\include;
+$(LIBEVENT_ROOT)\;
+$(LIBEVENT_ROOT)\build;
+$(LIBEVENT_ROOT)\build\include;
+$(OPENSSL_ROOT_DIR)\include;
+$(OPENSSL_ROOT_DIR)\build;
+$(OPENSSL_ROOT_DIR)\build\include;
+$(THIRD_PARTY);
+
+
+
+
+
+用intel编译器编译boost_1.76.0所需改动的地方：
+<boost_path>\tools\build\src\tools\intel-win.jam:
+168-253行
+    if $(command) || $(root)
+    {
+        local bin ;
+        if $(command)
+        {
+            bin = [ common.get-absolute-tool-path $(command[-1]) ] ;
+            if $(bin) && ( $(major) = 12 || [ numbers.less 12 $(major) ] )
+            {
+                bin = [ path.make $(bin) ] ;
+                bin = [ path.parent $(bin) ] ;
+            }
+        }
+        root ?= $(bin) ;
+        root = $(root)/ ;
+    }
+
+    local setup ;
+    local setup_astk_bat ;
+    local setup_bat ;
+    if $(major) = 21 || [ numbers.less 21 $(major) ]
+    {
+        setup_astk_bat = "setvars_*.bat" ;
+        setup_bat = "setvars.bat" ;
+    }
+    else
+    {
+        setup_astk_bat = "iclvars_*.bat" ;
+        setup_bat = "iclvars.bat" ;
+    }
+    
+    setup = [ path.glob $(root) : $(setup_astk_bat) ] ;
+    if ! $(setup)
+    {
+       setup = [ path.join $(root) $(setup_bat) ] ;
+       setup = [ path.native $(setup) ] ;
+    }
+
+    local target_types ;
+    local iclvars_vs_arg ;
+    if $(major) = 12 || [ numbers.less 12 $(major) ]
+    {
+        # if we have a known intel toolset check for visual studio compatibility
+        # if not trust parameters
+        if ! [ is-msvc-supported $(version) : $(msvc-version) ]
+        {
+            errors.error "msvc $(msvc-version) not supported for intel toolset version $(version)" ;
+        }
+        if $(.iclvars-version-alias-$(compatibility))
+		{
+			iclvars_vs_arg = $(.iclvars-version-alias-$(compatibility)) ;
+		}
+		else
+        {
+            errors.error "Don't know what parameter to pass for vc version ( $(compatibility) )" ;
+        }
+        # There are two possible paths for the 64-bit intel compiler,
+        # one for the IA32-Intel64 cross compiler, and one for the native
+        # 64 bit compiler. We prefer the latter one if it's installed,
+        # and don't rely on whether the OS reports whether we're 64 or 32 bit
+        # as that really only tells us which subsystem bjam is running in:
+        #
+        local root_start ;
+        if $(major) = 21 || [ numbers.less 21 $(major) ]
+        {
+            root_start = [ path.join $(root) "compiler/latest/windows/bin" ] ;
+            root_start = [ path.native $(root_start) ] ;
+        }
+        else
+        {
+            root_start = $(root) ;
+        }
+        local intel64_path = [ path.join $(root_start) intel64 ] ;
+        if [ path.glob $(intel64_path) : icl.exe ]
+        {
+            target_types = ia32 intel64 ;
+        }
+        else
+        {
+            target_types = ia32 ia32_intel64 ;
+        }
+    }
+    else
+    {
+        target_types = default ;
+        iclvars_vs_arg = $(compatibility) ;
+    }
+用以下代替
+	if $(command) || $(root)
+	{
+		local bin = [ common.get-absolute-tool-path $(command[-1]) ] ;
+		if $(major) >= 2021
+		{
+			bin = [ path.make $(bin) ] ;
+			bin = [ path.parent $(bin) ] ;
+			bin = [ path.parent $(bin) ] ;
+			bin = [ path.parent $(bin) ] ;
+			root ?= $(bin) ;
+			root = $(root)/env ;
+		}
+		else if $(major) >= 12 && $(major) < 2021
+		{
+			bin = [ path.make $(bin) ] ;
+			bin = [ path.parent $(bin) ] ;
+			root ?= $(bin) ;
+			root = $(root)/ ;
+		}
+		else
+		{
+			root ?= $(bin) ;
+			root = $(root)/ ;
+		}
+	}
+	
+	local setup ;
+	if $(major) >= 2021
+	{
+		setup = [ path.glob $(root) : vars_*.bat ] ;
+		if ! $(setup)
+		{
+			setup = [ path.glob $(root) : "vars.bat" ] ;
+			setup = [ path.native $(setup) ] ;
+		}
+	}
+	else
+	{
+		setup = [ path.glob $(root) : iclvars_*.bat ] ;
+		if ! $(setup)
+		{
+			setup = [ path.join $(root) "iclvars.bat" ] ;
+			setup = [ path.native $(setup) ] ;
+		}
+	}
+	
+	local target_types ;
+	local iclvars_vs_arg ;
+	if $(major) >= 12
+	{
+		# if we have a known intel toolset check for visual studio compatibility
+		# if not trust parameters
+		if ! [ is-msvc-supported $(version) : $(msvc-version) ]
+		{
+			errors.error "msvc $(msvc-version) not supported for intel toolset version $(version)" ;
+		}
+		if $(.iclvars-version-alias-$(compatibility))
+		{
+			iclvars_vs_arg = $(.iclvars-version-alias-$(compatibility)) ;
+		}
+		else
+		{
+			errors.error "Don't know what parameter to pass for vc version ( $(compatibility) )" ;
+		}
+		# There are two possible paths for the 64-bit intel compiler,
+		# one for the IA32-Intel64 cross compiler, and one for the native
+		# 64 bit compiler. We prefer the latter one if it's installed,
+		# and don't rely on whether the OS reports whether we're 64 or 32 bit
+		# as that really only tells us which subsystem bjam is running in:
+		#
+		if $(major) >= 2021
+		{
+			local intel64_path = [ path.parent $(root) ] ;
+			intel64_path = [ path.join $(intel64_path) windows/bin/intel64 ] ;
+			if [ path.glob $(intel64_path) : icl.exe ]
+			{
+				target_types = ia32 intel64 ;
+			}
+			else
+			{
+				target_types = ia32 ia32_intel64 ;
+			}
+		}
+		else
+		{
+			local intel64_path = [ path.join $(root) intel64 ] ;
+			if [ path.glob $(intel64_path) : icl.exe ]
+			{
+				target_types = ia32 intel64 ;
+			}
+			else
+			{
+				target_types = ia32 ia32_intel64 ;
+			}
+		}
+	}
+	else
+    {
+        target_types = default ;
+        iclvars_vs_arg = $(compatibility) ;
+    }
+
+<boost_path>\tools\build\src\tools\msvc.jam：
+1957行
+toolset.flags msvc.compile.asm ASMFLAGS <architecture>x86/<warnings>on : /W3;
+用以下代替
+toolset.flags msvc.compile.asm ASMFLAGS <architecture>x86/<warnings>on : /W3 /c /Fo ;
+
+<boost_path>\boost\python\numpy\internal.hpp：
+29行
+#include <numpy/arrayobject.h>
+用以下代替
+#define _NPY_NO_DEPRECATIONS
+#include <numpy/arrayobject.h>
+#undef _NPY_NO_DEPRECATIONS
