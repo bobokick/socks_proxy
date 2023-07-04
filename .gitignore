@@ -1,5 +1,5 @@
 .vs
-.vscode
+# .vscode
 build/
 lib/
 !third_parties/**/build
