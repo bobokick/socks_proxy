@@ -14,7 +14,7 @@ add_executable(${EXE_NAME} ${ALL_SRCS})
 if (CMAKE_SYSTEM_NAME MATCHES "Windows")
 	# 头文件路径
 	target_include_directories(${EXE_NAME} PRIVATE
-		${TP_ROOT_PATH}/boost
+		${TP_ROOT_PATH}/boost_pure
 		)
 endif()
 
