@@ -43,9 +43,10 @@ public:
     // 处理client请求（也就是发送数据到client）
     void start()
     {
-        // @note log for debug
-        std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
-        std::cout << "server has create a new socket '" << local_skt_info << "' for connectting client.\n";
+        // @log for debug
+        // std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
+        // boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
+        // std::cout << "server has create a new socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
         // 声明为静态，防止boost::asio::async_write在返回后需要调用给定函数（该例子指定的函数为TcpConnection::handleWrite）时，
         // 该变量内存已被释放导致的内存引用错误的问题（问题为：由于boost::asio::async_write考虑到后续函数操作可能会使用到该message的内容。因此在msvc编译器的debug模式下，调用给定函数前会对该message进行内存检查，失败则抛出运行出错）。
         static std::string message = "";
@@ -59,13 +60,13 @@ public:
         // 注意用的是boost::asio::async_write而不是ip::tcp::socket::async_write_some，是为了保证整个数据块都能被完整发送。
         // boost::asio::buffer用于将字符串转换成可传输的格式，如二进制，大端格式等。
         boost::asio::async_write(socket_, boost::asio::buffer(message), std::bind(&TcpConnection::handleWrite, this, std::placeholders::_1, std::placeholders::_2));
-        // std::cout << "message has sent to client " << client_info << "\n";
-        // if (socket_.is_open())
-        // {
-        //     socket_.shutdown(tcp::socket::shutdown_both);
-        //     socket_.close();
-        //     std::cout << "close the connection\n\n";
-        // }
+        if (socket_.is_open())
+        {
+            socket_.shutdown(tcp::socket::shutdown_both);
+            socket_.close();
+            std::cout << "message has sent to client " << client_info << "\n";
+            std::cout << "close the connection\n\n";
+        }
     }
 };
 
@@ -96,10 +97,10 @@ class TcpServer
     // 创建一个套接字和一个异步接收操作用于等待新连接
     void startAccept()
     {
-        // @note log for debug
-        std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
-        // acceptor_.
-        std::cout << "server has a listen socket '" << listen_skt_info << "' for listening connection.\n";
+        // @log for debug
+        // std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
+        // boost::asio::detail::socket_type native_skt = acceptor_.native_handle();
+        // std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
         // std::cout << "this thread id in startAccept: " << std::this_thread::get_id() << std::endl;
         // 创建一个空的TCP套接字类对象，用于存储后续async_accept函数返回的已连接套接字。
         TcpConnection::TcpPointer new_connection = TcpConnection::create(io_context_);
@@ -109,7 +110,6 @@ class TcpServer
         // 异步操作，此时不进行阻塞来等待client的连接请求。当调用该函数时，进行操作分发，并直接返回。
         // 后续在调用io.run()处进行阻塞等待，并在该套接字收到连接请求后进行tcp连接，并后续调用指定的函数（该例子指定的函数为TcpServer::handleAccept）来进行操作。
         acceptor_.async_accept(new_connection->getSocket(), std::bind(&TcpServer::handleAccept, this, new_connection, std::placeholders::_1));
-        // std::cout << "connection has built!" << std::endl;
     }
 public:
     // 初始化监听对象（也就是建立监听套接字）来监听tcp ipv4上给定端口的连接请求。
