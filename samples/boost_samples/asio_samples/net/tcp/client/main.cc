@@ -11,18 +11,20 @@ void tcpClient(std::string server_host)
         // 用于解析服务器以及协议的
         tcp::resolver resolver(io_context);
         // 对服务器以及所需协议进行解析，用daytime协议
-        // 返回包含tcp端点的解析结果迭代器，该结果迭代器用于获取解析后的tcp端点用于进行tcp连接。
+        // 返回包含至少一个tcp端点的解析结果迭代器（只要不解析失败），该结果迭代器用于获取解析后的tcp端点用于进行tcp连接。
         tcp::resolver::results_type endpoint_iter = resolver.resolve(server_host, "daytime");
         // 输出连接请求相关信息
         std::cout << "ready for connecting " << server_host << ":13 using by daytime protocol\n";
         // 创建套接字
         tcp::socket socket(io_context);
-        // 请求套接字连接，自动检测ip版本如ipv4, ipv6进行连接。
+        // 请求套接字连接
+        // 可以自动检测ip版本如ipv4, ipv6进行连接。
+        // 该函数会尝试对迭代器中的每一个tcp端点进行连接，直到成功连接到一个。
         boost::asio::connect(socket, endpoint_iter);
         // @log for debug
         std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
-        std::cout << "client has create a socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting server.\n";
+        std::cout << "client has create a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for connectting server.\n";
         // 输出已连接信息
         std::cout << "connected successfully to the server " << server_host << ":13\n";
         // 一直接收数据直到到数据尾
@@ -58,7 +60,7 @@ int main(int argc, char* argv[])
     // 输入server ip
     if (argc != 2)
     {
-        std::cerr << "Usage: client <host>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <host>" << std::endl;
         return 1;
     }
     tcpClient(argv[1]);

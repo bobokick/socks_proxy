@@ -1,7 +1,7 @@
 message(STATUS "\tentering the dir: ${CMAKE_CURRENT_SOURCE_DIR}")
 
 # 设置可执行文件名
-set(EXE_NAME test_asio_net_udp_client)
+set(EXE_NAME test_asio_net_udp_server_synchronous)
 
 # 所有源文件的路径
 set(ALL_SRCS

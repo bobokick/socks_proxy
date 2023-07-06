@@ -3,7 +3,6 @@
 // udp客户端
 void udpClient(std::string server_host)
 {
-    using boost::asio::ip::tcp;
     using boost::asio::ip::udp;
     try
     {
@@ -12,41 +11,36 @@ void udpClient(std::string server_host)
         // 用于解析服务器以及协议的
         udp::resolver resolver(io_context);
         // 对服务器以及所需协议进行解析，用daytime协议
-        // 获取解析后的tcp端点，该端点用于进行tcp连接。
-        udp::endpoint endpoint = *(resolver.resolve(udp::v4(), server_host, "daytime").begin());
-        // 输出连接请求相关信息
-        std::cout << "ready for connecting " << server_host << ":13 using by daytime protocol\n";
+        // 返回udp端点，用于进行udp连接。
+        udp::endpoint receiver_endpoint = *(resolver.resolve(udp::v4(), server_host, "daytime").begin());
         // 创建套接字
-        tcp::socket socket(io_context);
-        // 请求套接字连接，自动检测ip版本如ipv4, ipv6进行连接。
-        boost::asio::connect(socket, endpoint);
+        udp::socket socket(io_context);
+        // 发送数据前先指定网络层协议，否则无法进行发送。
+        socket.open(udp::v4());
+        // 发送数据包到指定的udp端点
+        // udp由于是面向数据包类型，不是向tcp一样是流类型的套接字。所以不需要先进行握手，直接发送。
+        // 该函数将会阻塞至成功发送数据或者出错。
+        socket.send_to(boost::asio::buffer("empty content."), receiver_endpoint);
         // @log for debug
         std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
-        std::cout << "client has create a socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting server.\n";
-        // 输出已连接信息
-        std::cout << "connected successfully to the server " << server_host << ":13\n";
-        // 一直接收数据直到到数据尾
-        while(true)
-        {
-            // 用于接收数据
-            std::vector<char> buff(128);
-            boost::system::error_code error;
-            // 接收server发送的数据，并将其写入到buff
-            // 返回接收的字节大小
-            size_t len = socket.read_some(boost::asio::buffer(buff), error);
-            // 全部接收完毕时，关闭连接
-            if (error == boost::asio::error::eof)
-            {
-                std::cout << "close the connection\n";
-                break; // Connection closed cleanly by peer.
-            }
-            else if (error)
-                throw boost::system::system_error(error); // Some other error.
-            // 显示接收的数据
-            std::cout << "received message:\n";
-            std::cout.write(buff.data(), len);
-        }
+        std::cout << "client has a socket  '" << local_skt_info << "/fd:" << local_native_skt << "' for communicating with server.\n";
+        // 输出等待接收daytime协议数据信息。
+        std::cout << "ready for receiving daytime data from " << server_host << ":13\n";
+        // 用于接收数据
+        std::vector<char> buff(128);
+        // 用于储存后续接收到udp数据的发送方的udp端口相关信息。
+        udp::endpoint sender_endpoint;
+        // 储存接收数据操作的错误信息
+        boost::system::error_code receive_error;
+        // 接收server发送的数据，并将其写入到buff。
+        // 返回接收的字节大小。
+        // 该函数将会阻塞至成功接收数据或者出错。
+        size_t len = socket.receive_from(boost::asio::buffer(buff), sender_endpoint, 0, receive_error);
+        // 显示接收的数据
+        std::cout << "received message:\n";
+        std::cout.write(buff.data(), len);
+        std::cout << "close the connection\n";
     }
     catch (std::exception& e)
     {
@@ -59,7 +53,7 @@ int main(int argc, char* argv[])
     // 输入server ip
     if (argc != 2)
     {
-        std::cerr << "Usage: client <host>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <host>" << std::endl;
         return 1;
     }
     udpClient(argv[1]);

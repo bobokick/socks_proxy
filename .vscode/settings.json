@@ -113,5 +113,7 @@
         "xutility": "c",
         "*.ipp": "c",
         "*.in": "cpp"
-    }
+    },
+    "iis.configDir": "",
+    "search.useIgnoreFiles": false
 }

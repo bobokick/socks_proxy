@@ -14,13 +14,14 @@ void tcpServer(int listen_port, std::string (*p_makeString) ())
     using boost::asio::ip::tcp;
     try
     {
+        // 提供I/O服务，用于接收到来的客户端连接，服务器对象将会使用
         boost::asio::io_context io_context;
         // 初始化监听对象（也就是建立监听套接字）来监听tcp ipv4上给定端口的连接请求。
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), listen_port));
         // @log for debug
         std::string listen_skt_info = acceptor.local_endpoint().address().to_string() + ":" + std::to_string(acceptor.local_endpoint().port());
         boost::asio::detail::socket_type native_skt = acceptor.native_handle();
-        std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
+        std::cout << "server has a listen socket '" << listen_skt_info << "/fd:" << native_skt << "' for listening connection.\n";
         bool first = true;
         // 循环等待client的连接请求并发送数据
         while(true)
@@ -32,13 +33,12 @@ void tcpServer(int listen_port, std::string (*p_makeString) ())
             // 等待客户端的连接请求，并在收到连接请求后，新建套接字与客户端套接字之间建立连接，并将新建的套接字存储到给定的TCP套接字类对象中。
             // 同步操作，进行阻塞用于等待client的连接请求。
             acceptor.accept(skt);
-            std::cout << "connection has built!" << std::endl;
             // @log log for debug
             if (first)
             {
                 std::string local_skt_info = skt.local_endpoint().address().to_string() + ":" + std::to_string(skt.local_endpoint().port());
                 boost::asio::detail::socket_type local_native_skt = skt.native_handle();
-                std::cout << "server has create a socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
+                std::cout << "server has create a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for connectting client.\n";
                 first = false;
             }
             // 客户端ip port信息
