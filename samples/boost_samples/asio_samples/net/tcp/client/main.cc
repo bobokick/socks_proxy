@@ -20,9 +20,9 @@ void tcpClient(std::string server_host)
         // 请求套接字连接，自动检测ip版本如ipv4, ipv6进行连接。
         boost::asio::connect(socket, endpoints);
         // @log for debug
-        // std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
-        // boost::asio::detail::socket_type local_native_skt = socket.native_handle();
-        // std::cout << "client has create a new socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting server.\n";
+        std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
+        boost::asio::detail::socket_type local_native_skt = socket.native_handle();
+        std::cout << "client has create a socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting server.\n";
         // 输出已连接信息
         std::cout << "connected successfully to the server " << server_host << ":13\n";
         // 一直接收数据直到到数据尾

@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
         //boost::thread t(boost::bind(&boost::asio::io_context::run, &io));
         //std::thread t(thread_call, std::ref(io_context));
         // 运行io对象使之能够执行异步操作
-        // 阻塞，直到当前线程的所有work完成后或者io停止后才会返回。
+        // 阻塞，直到当前线程的所有operation完成后或者io停止后才会返回。
         io_context.run();
         //t.join();
     }

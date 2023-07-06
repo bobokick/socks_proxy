@@ -44,9 +44,9 @@ public:
     void start()
     {
         // @log for debug
-        // std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
-        // boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
-        // std::cout << "server has create a new socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
+        std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
+        boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
+        std::cout << "server has create a new socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
         // 声明为静态，防止boost::asio::async_write在返回后需要调用给定函数（该例子指定的函数为TcpConnection::handleWrite）时，
         // 该变量内存已被释放导致的内存引用错误的问题（问题为：由于boost::asio::async_write考虑到后续函数操作可能会使用到该message的内容。因此在msvc编译器的debug模式下，调用给定函数前会对该message进行内存检查，失败则抛出运行出错）。
         static std::string message = "";
@@ -97,11 +97,11 @@ class TcpServer
     // 创建一个套接字和一个异步接收操作用于等待新连接
     void startAccept()
     {
-        // @log for debug
-        // std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
-        // boost::asio::detail::socket_type native_skt = acceptor_.native_handle();
-        // std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
         // std::cout << "this thread id in startAccept: " << std::this_thread::get_id() << std::endl;
+        // @log for debug
+        std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
+        boost::asio::detail::socket_type native_skt = acceptor_.native_handle();
+        std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
         // 创建一个空的TCP套接字类对象，用于存储后续async_accept函数返回的已连接套接字。
         TcpConnection::TcpPointer new_connection = TcpConnection::create(io_context_);
         // 输出等待连接请求信息

@@ -18,9 +18,9 @@ void tcpServer(int listen_port, std::string (*p_makeString) ())
         // 初始化监听对象（也就是建立监听套接字）来监听tcp ipv4上给定端口的连接请求。
         tcp::acceptor acceptor(io_context, tcp::endpoint(tcp::v4(), listen_port));
         // @log for debug
-        // std::string listen_skt_info = acceptor.local_endpoint().address().to_string() + ":" + std::to_string(acceptor.local_endpoint().port());
-        // boost::asio::detail::socket_type native_skt = acceptor.native_handle();
-        // std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
+        std::string listen_skt_info = acceptor.local_endpoint().address().to_string() + ":" + std::to_string(acceptor.local_endpoint().port());
+        boost::asio::detail::socket_type native_skt = acceptor.native_handle();
+        std::cout << "server has a listen socket '" << listen_skt_info << "', fd: " << native_skt << " for listening connection.\n";
         bool first = true;
         // 循环等待client的连接请求并发送数据
         while(true)
@@ -34,13 +34,13 @@ void tcpServer(int listen_port, std::string (*p_makeString) ())
             acceptor.accept(skt);
             std::cout << "connection has built!" << std::endl;
             // @log log for debug
-            // if (first)
-            // {
-            //     std::string local_skt_info = skt.local_endpoint().address().to_string() + ":" + std::to_string(skt.local_endpoint().port());
-            //     boost::asio::detail::socket_type local_native_skt = skt.native_handle();
-            //     std::cout << "server has create a new socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
-            //     first = false;
-            // }
+            if (first)
+            {
+                std::string local_skt_info = skt.local_endpoint().address().to_string() + ":" + std::to_string(skt.local_endpoint().port());
+                boost::asio::detail::socket_type local_native_skt = skt.native_handle();
+                std::cout << "server has create a socket  '" << local_skt_info << "', fd: " << local_native_skt << " for connectting client.\n";
+                first = false;
+            }
             // 客户端ip port信息
             std::string client_info = skt.remote_endpoint().address().to_string() + ":" + std::to_string(skt.remote_endpoint().port());
             // 输出已连接信息
