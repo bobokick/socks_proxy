@@ -7,7 +7,6 @@
 #include <vector>
 #include <functional>
 #include <boost/asio.hpp>
-#include <boost/thread/thread.hpp>
 #ifdef _WIN32
 #include <sdkddkver.h>
 // #define WINVER 0x0A00

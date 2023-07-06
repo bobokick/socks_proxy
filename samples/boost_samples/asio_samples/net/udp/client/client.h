@@ -1,5 +1,5 @@
-#ifndef BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
-#define BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
+#ifndef BOOST_ASIO_SAMPLE_NET_UDP_CLINET_H_
+#define BOOST_ASIO_SAMPLE_NET_UDP_CLINET_H_
 
 #include <iostream>
 #include <string>
@@ -11,6 +11,6 @@
 // #define _WIN32_WINNT 0x0A00
 #endif
 
-void tcpClient(std::string server_host);
+void udpClient(std::string server_host);
 
-#endif // !BOOST_ASIO_SAMPLE_NET_TCP_CLINET_H_
+#endif // !BOOST_ASIO_SAMPLE_NET_UDP_CLINET_H_

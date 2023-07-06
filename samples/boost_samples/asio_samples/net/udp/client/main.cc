@@ -1,24 +1,25 @@
 #include "client.h"
 
-// tcp客户端
-void tcpClient(std::string server_host)
+// udp客户端
+void udpClient(std::string server_host)
 {
     using boost::asio::ip::tcp;
+    using boost::asio::ip::udp;
     try
     {
         // 使用asio的都需要至少一个IO执行上下文，如io_context或者thread_pool对象。
         boost::asio::io_context io_context;
         // 用于解析服务器以及协议的
-        tcp::resolver resolver(io_context);
+        udp::resolver resolver(io_context);
         // 对服务器以及所需协议进行解析，用daytime协议
-        // 返回包含tcp端点的解析结果迭代器，该结果迭代器用于获取解析后的tcp端点用于进行tcp连接。
-        tcp::resolver::results_type endpoint_iter = resolver.resolve(server_host, "daytime");
+        // 获取解析后的tcp端点，该端点用于进行tcp连接。
+        udp::endpoint endpoint = *(resolver.resolve(udp::v4(), server_host, "daytime").begin());
         // 输出连接请求相关信息
         std::cout << "ready for connecting " << server_host << ":13 using by daytime protocol\n";
         // 创建套接字
         tcp::socket socket(io_context);
         // 请求套接字连接，自动检测ip版本如ipv4, ipv6进行连接。
-        boost::asio::connect(socket, endpoint_iter);
+        boost::asio::connect(socket, endpoint);
         // @log for debug
         std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
@@ -61,6 +62,6 @@ int main(int argc, char* argv[])
         std::cerr << "Usage: client <host>" << std::endl;
         return 1;
     }
-    tcpClient(argv[1]);
+    udpClient(argv[1]);
     return 0;
 }
