@@ -23,23 +23,29 @@ std::string makeDaytimeString();
 class TcpConnection
 {
     tcp::socket socket_;
+
     // 私有构造，创建实例包含的套接字
     TcpConnection(boost::asio::io_context& io_context):
         socket_(io_context) {}
-    // 关于客户端连接的其他操作将由该函数负责
+
+    // 处理异步写入操作执行后返回的相关信息
     // 如错误，长度信息输出等
     // 如不需要处理这些相关信息，则可以将该函数形参表设为空
     void handleWrite(const std::error_code& /*error*/, size_t /*bytes_transferred*/) {}
+
 public:
     // 用共享智能指针是为了保持TcpConnection对象的存活。
     typedef std::shared_ptr<TcpConnection> TcpPointer;
+
     // 用于控制该类实例的创建，用智能指针控制
     inline static TcpPointer create(boost::asio::io_context& io_context)
     {
         return TcpPointer(new TcpConnection(io_context));
     }
+
     // 返回该实例包含的套接字
     tcp::socket& getSocket() { return socket_; }
+
     // 处理client请求（也就是发送数据到client）
     void start()
     {
@@ -57,6 +63,8 @@ public:
         // 储存将要发送的数据
         message = makeDaytimeString();
         // 发送服务到客户端
+        // 异步操作，此时不进行阻塞来等待发送数据到client完毕。当调用该函数时，进行操作分发，并直接返回。
+        // 发送操作执行完毕后会调用指定的函数（该例子指定的函数为TcpConnection::handleWrite）来进行操作。
         // 注意用的是boost::asio::async_write而不是ip::tcp::socket::async_write_some，是为了保证整个数据块都能被完整发送。
         // boost::asio::buffer用于将字符串转换成可传输的格式，如二进制，大端格式等。
         boost::asio::async_write(socket_, boost::asio::buffer(message), std::bind(&TcpConnection::handleWrite, this, std::placeholders::_1, std::placeholders::_2));
@@ -74,10 +82,14 @@ public:
 class TcpServer
 {
     boost::asio::io_context& io_context_;
+
     tcp::acceptor acceptor_;
+
+    // 协议端口
     int listen_port_;
+
     // 当startAccept()函数中的异步接收操作完成时，该函数会被调用
-    // 它服务客户端请求时，然后会继续调用startAccept进行下一个接收操作。
+    // 它服务客户端请求后，然后会继续调用startAccept进行下一个接收操作。
     void handleAccept(TcpConnection::TcpPointer new_connection, const std::error_code& error)
     {
         // std::cout << "this thread id in handleAccept: " << std::this_thread::get_id() << std::endl;
@@ -94,7 +106,8 @@ class TcpServer
         // 继续等待client连接请求
         startAccept();
     }
-    // 创建一个套接字和一个异步接收操作用于等待新连接
+
+    // 异步接收client连接请求（也就是对所有向该端口发送udp数据的，都视为连接请求）
     void startAccept()
     {
         // std::cout << "this thread id in startAccept: " << std::this_thread::get_id() << std::endl;

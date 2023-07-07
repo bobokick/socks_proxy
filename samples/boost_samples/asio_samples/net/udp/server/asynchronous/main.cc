@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
         // 提供I/O服务，用于接收到来的客户端连接，服务器对象将会使用
         boost::asio::io_context io_context;
         // 进行daytime协议的通信
-        TcpServer server(io_context, 13);
+        UdpServer server(io_context, 13);
         auto thread_call = [](boost::asio::io_context& io) { io.run(); };
         // 开始一个新的thread用来io_context::run（无什么作用）
         //boost::thread t(boost::bind(&boost::asio::io_context::run, &io));

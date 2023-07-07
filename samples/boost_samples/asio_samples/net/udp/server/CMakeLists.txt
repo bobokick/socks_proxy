@@ -1,7 +1,7 @@
 
 # 设置需要编译的子文件夹
 set(COMPILE_FOLDERS
-    # asynchronous
+    asynchronous
     synchronous
 )
 
