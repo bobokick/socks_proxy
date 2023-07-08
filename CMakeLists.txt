@@ -21,6 +21,13 @@ message(STATUS "CMAKE_MAKE_PROGRAM: ${CMAKE_MAKE_PROGRAM}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_CONFIGURATION_TYPES: ${CMAKE_CONFIGURATION_TYPES}")
 
+if ("${CMAKE_MAKE_PROGRAM}" MATCHES ".*MSBuild.*")
+    set(MAKE_TOOL "MSBuild")
+endif()
+
+# for clangd intellisence
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 # 根据操作系统增加编译选项
 set(CXX_STANDARD 17)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -30,30 +37,30 @@ endif()
 
 set(TP_ROOT_PATH ${CMAKE_SOURCE_DIR}/third_parties)
 
-# 第三方库单独进行cmake及编译
-find_package (Python3 COMPONENTS Interpreter)
-# 需要编译的第三方库
-set(precompile_module_path
-    ${TP_ROOT_PATH}/boost
-)
-foreach(module_path ${precompile_module_path})
-    if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${module_path}/build)
-        message(STATUS "no exist ${CMAKE_SOURCE_DIR}/${module_path}/build")
-        execute_process(
-            COMMAND ${Python3_EXECUTABLE} precompile.py ${module_path} ${CMAKE_SYSTEM_NAME} ${used_cxx_compiler} ${CMAKE_MAKE_PROGRAM} ${CMAKE_BUILD_TYPE}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            TIMEOUT 0
-            RESULT_VARIABLE result_var
-            OUTPUT_VARIABLE output_var
-            ERROR_VARIABLE error_var
-            COMMAND_ECHO STDOUT
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_STRIP_TRAILING_WHITESPACE)
-        message(STATUS "result: ${result_var}")
-        message(STATUS "output: \n${output_var}")
-        message(STATUS "error: \n${error_var}")
-    endif()
-endforeach()
+# # 第三方库单独进行cmake及编译
+# find_package (Python3 COMPONENTS Interpreter)
+# # 需要编译的第三方库
+# set(precompile_module_path
+#     ${TP_ROOT_PATH}/boost
+# )
+# foreach(module_path ${precompile_module_path})
+#     if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${module_path}/build)
+#         message(STATUS "no exist ${CMAKE_SOURCE_DIR}/${module_path}/build")
+#         execute_process(
+#             COMMAND ${Python3_EXECUTABLE} precompile.py ${module_path} ${CMAKE_SYSTEM_NAME} ${used_cxx_compiler} ${CMAKE_MAKE_PROGRAM} ${CMAKE_BUILD_TYPE}
+#             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+#             TIMEOUT 0
+#             RESULT_VARIABLE result_var
+#             OUTPUT_VARIABLE output_var
+#             ERROR_VARIABLE error_var
+#             COMMAND_ECHO STDOUT
+#             OUTPUT_STRIP_TRAILING_WHITESPACE
+#             ERROR_STRIP_TRAILING_WHITESPACE)
+#         message(STATUS "result: ${result_var}")
+#         message(STATUS "output: \n${output_var}")
+#         message(STATUS "error: \n${error_var}")
+#     endif()
+# endforeach()
 
 # 开启ctest测试，生成Makefile以及相应测试文件后，就可以运行make test来执行用add_test添加的测试了。
 #enable_testing()

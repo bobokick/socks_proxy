@@ -15,6 +15,11 @@ configure_file(
 
 add_executable(${PROJECT_NAME} main.cc)
 
+# target_compile_definitions(${PROJECT_NAME} PRIVATE 
+#     BOOST_NO_CXX11_SCOPED_ENUMS
+#     BOOST_NO_SCOPED_ENUMS
+# )
+
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${TP_ROOT_PATH}/boost_pure
 )
@@ -23,17 +28,16 @@ target_link_directories(${PROJECT_NAME} PRIVATE
 
 )
 
-target_link_libraries(${PROJECT_NAME} 
-    Boost::filesystem
+target_link_libraries(${PROJECT_NAME} PRIVATE
     $<$<PLATFORM_ID:Linux>:dl>
+    # Boost::system
+    Boost::filesystem
 )
 
 add_dependencies(${PROJECT_NAME} 
     boostdll_test_lib1
     boostdll_test_lib2
 )
-
-message(STATUS ${Boost_LIBRARIES})
 
 # 使用生成器表达式以及target_properties指定target生成的位置，
 # 避免msbuild等生成器会自动加上Debug/Realease等后缀

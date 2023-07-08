@@ -18,7 +18,7 @@ void udpClient(std::string server_host)
         // 发送数据前先指定网络层协议，否则无法进行发送。
         socket.open(udp::v4());
         // 发送数据包到指定的udp端点
-        // udp由于是面向数据包类型，不是向tcp一样是流类型的套接字。所以不需要先进行握手，直接发送。
+        // 由于udp是面向数据包类型，不是向tcp一样是流类型的套接字。所以不需要先进行握手，直接发送。
         // 该函数将会阻塞至成功发送数据或者出错。
         socket.send_to(boost::asio::buffer("empty content."), receiver_endpoint);
         // @log for debug

@@ -5,3 +5,4 @@ lib/
 !third_parties/**/build
 !third_parties/**/lib
 *autogen*
+.cache
