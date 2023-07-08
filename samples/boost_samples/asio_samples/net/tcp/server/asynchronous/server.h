@@ -47,21 +47,21 @@ public:
     tcp::socket& getSocket() { return socket_; }
 
     // 处理client请求（也就是发送数据到client）
-    void start()
+    void addressRequest(std::string (*p_data_gen) ())
     {
         // @log for debug
-        std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
+        std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
         std::cout << "server has create a new socket '" << local_skt_info << "/fd:" << local_native_skt << "' for connectting client.\n";
-        // 声明为静态，防止boost::asio::async_write在返回后需要调用给定函数（该例子指定的函数为TcpConnection::handleWrite）时，
+        // @warning: 声明为静态，防止boost::asio::async_write在返回后需要调用给定函数（该例子指定的函数为TcpConnection::handleWrite）时，
         // 该变量内存已被释放导致的内存引用错误的问题（问题为：由于boost::asio::async_write考虑到后续函数操作可能会使用到该message的内容。因此在msvc编译器的debug模式下，调用给定函数前会对该message进行内存检查，失败则抛出运行出错）。
         static std::string message = "";
         // 客户端ip port信息
-        std::string client_info = socket_.remote_endpoint().address().to_string() + ":" + std::to_string(socket_.remote_endpoint().port());
+        std::string client_info = socket_.remote_endpoint().address().to_string() + "/" + std::to_string(socket_.remote_endpoint().port());
         // 输出已连接信息
         std::cout << "connected successfully with client " << client_info << std::endl;
         // 储存将要发送的数据
-        message = makeDaytimeString();
+        message = p_data_gen();
         // 发送服务到客户端
         // 异步操作，此时不进行阻塞来等待发送数据到client完毕。当调用该函数时，进行操作分发，并直接返回。
         // 发送操作执行完毕后会调用指定的函数（该例子指定的函数为TcpConnection::handleWrite）来进行操作。
@@ -85,6 +85,9 @@ class TcpServer
 
     tcp::acceptor acceptor_;
 
+    // 发送数据的生成
+    std::string (*p_data_gen_) ();
+
     // 协议端口
     int listen_port_;
 
@@ -97,7 +100,7 @@ class TcpServer
         if (!error)
         {
             // std::cout << "no error" << std::endl;
-            new_connection->start();
+            new_connection->addressRequest(p_data_gen_);
         }
         else
         {
@@ -112,7 +115,7 @@ class TcpServer
     {
         // std::cout << "this thread id in startAccept: " << std::this_thread::get_id() << std::endl;
         // @log for debug
-        std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + ":" + std::to_string(acceptor_.local_endpoint().port());
+        std::string listen_skt_info = acceptor_.local_endpoint().address().to_string() + "/" + std::to_string(acceptor_.local_endpoint().port());
         boost::asio::detail::socket_type native_skt = acceptor_.native_handle();
         std::cout << "server has a listen socket '" << listen_skt_info << "/fd:" << native_skt << "' for listening connection.\n";
         // 创建一个空的TCP套接字类对象，用于存储后续async_accept函数返回的已连接套接字。
@@ -126,7 +129,7 @@ class TcpServer
     }
 public:
     // 初始化监听对象（也就是建立监听套接字）来监听tcp ipv4上给定端口的连接请求。
-    TcpServer(boost::asio::io_context& io_context, int listen_port): io_context_(io_context), acceptor_(io_context, tcp::endpoint(tcp::v4(), listen_port)), listen_port_(listen_port)
+    TcpServer(boost::asio::io_context& io_context, int listen_port, std::string (*p_data_gen) () = makeDaytimeString): io_context_(io_context), acceptor_(io_context, tcp::endpoint(tcp::v4(), listen_port)), listen_port_(listen_port), p_data_gen_(p_data_gen)
     {
         startAccept();
     }

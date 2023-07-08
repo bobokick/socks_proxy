@@ -1,8 +1,9 @@
 #include "client.h"
 
-// udp客户端
+// udp客户端，支持ipv4，v6
 void udpClient(std::string server_host)
 {
+    using namespace boost::asio;
     using boost::asio::ip::udp;
     try
     {
@@ -12,17 +13,20 @@ void udpClient(std::string server_host)
         udp::resolver resolver(io_context);
         // 对服务器以及所需协议进行解析，用daytime协议
         // 返回udp端点，用于进行udp连接。
-        udp::endpoint receiver_endpoint = *(resolver.resolve(udp::v4(), server_host, "daytime").begin());
+        udp::endpoint receiver_endpoint = *(resolver.resolve(server_host, "daytime").begin());
+        auto host_addr = ip::address::from_string(server_host);
         // 创建套接字
+        // @warning: 同一网络适配器，同种ip协议下的所有进程的套接字都会关联唯一的端口和该端口对应的唯一io描述符。因此在同一网络适配器，同种ip协议下不能有多个套接字使用相同的端口。
         udp::socket socket(io_context);
         // 发送数据前先指定网络层协议，否则无法进行发送。
-        socket.open(udp::v4());
+        // 根据给定地址选择v4或v6协议。
+        host_addr.is_v4() ? socket.open(udp::v4()): socket.open(udp::v6());
         // 发送数据包到指定的udp端点
         // 由于udp是面向数据包类型，不是向tcp一样是流类型的套接字。所以不需要先进行握手，直接发送。
         // 该函数将会阻塞至成功发送数据或者出错。
         socket.send_to(boost::asio::buffer("empty content."), receiver_endpoint);
         // @log for debug
-        std::string local_skt_info = socket.local_endpoint().address().to_string() + ":" + std::to_string(socket.local_endpoint().port());
+        std::string local_skt_info = socket.local_endpoint().address().to_string() + "/" + std::to_string(socket.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
         std::cout << "client has a socket  '" << local_skt_info << "/fd:" << local_native_skt << "' for communicating with server.\n";
         // 输出等待接收daytime协议数据信息。

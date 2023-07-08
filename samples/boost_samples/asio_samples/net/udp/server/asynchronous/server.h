@@ -35,6 +35,9 @@ class UdpServer
     // 协议端口
     int listen_port_;
 
+    // 发送数据的生成
+    std::string (*p_data_gen_) ();
+
     // 用于接收连接请求数据
     std::vector<char> buff_;
 
@@ -49,16 +52,16 @@ class UdpServer
     // 发送数据
     void sendData()
     {
-        // 声明为静态，防止async_send_to函数在返回后需要调用给定函数（该例子指定的函数为UdpServer::handleSend）时，
+        // @warning: 声明为静态，防止async_send_to函数在返回后需要调用给定函数（该例子指定的函数为UdpServer::handleSend）时，
         // 该变量内存已被释放导致的内存引用错误的问题（问题为：由于async_send_to考虑到后续函数操作可能会使用到该message的内容。因此在msvc编译器的debug模式下，调用给定函数前会对该message进行内存检查，失败则抛出运行出错）。
         static std::string message = "";
         // daytime数据
-        message = makeDaytimeString();
+        message = p_data_gen_();
         // 发送数据包到client
         // 异步操作，此时不进行阻塞来等待发送数据到client完毕。当调用该函数时，进行操作分发，并直接返回。
         // 发送操作执行完毕后会调用指定的函数（该例子指定的函数为UdpServer::handleSend）来进行操作。
         socket_.async_send_to(boost::asio::buffer(message), remote_endpoint_, std::bind(&UdpServer::handleSend, this, std::placeholders::_1, std::placeholders::_2));
-        // 不要关闭udp套接字。
+        // @warning: 不要关闭udp套接字。
         // 由于udp是面向数据包类型，不是向tcp一样是流类型的套接字。
         // 没有握手分手阶段，所以不需要关闭udp套接字，可以对多个client使用同一个udp套接字。
         if (socket_.is_open())
@@ -79,7 +82,7 @@ class UdpServer
         {
             // std::cout << "no error" << std::endl;
             // 客户端ip port信息
-            client_info_ = remote_endpoint_.address().to_string() + ":" + std::to_string(remote_endpoint_.port());
+            client_info_ = remote_endpoint_.address().to_string() + "/" + std::to_string(remote_endpoint_.port());
             // 输出已连接信息
             std::cout << "received connection request successfully from client " << client_info_ << std::endl;
             // 进行数据发送
@@ -106,10 +109,10 @@ class UdpServer
 
 public:
     // 创建udp套接字用于接收ipv4上给定端口的udp连接请求
-    UdpServer(boost::asio::io_context& io_context, int listen_port): socket_(io_context, udp::endpoint(udp::v4(), listen_port)), listen_port_(listen_port), buff_(128)
+    UdpServer(boost::asio::io_context& io_context, int listen_port, std::string (*p_data_gen) () = makeDaytimeString): socket_(io_context, udp::endpoint(udp::v4(), listen_port)), listen_port_(listen_port), p_data_gen_(p_data_gen), buff_(128)
     {
         // @log for debug
-        std::string local_skt_info = socket_.local_endpoint().address().to_string() + ":" + std::to_string(socket_.local_endpoint().port());
+        std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
         std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
         startReceive();
