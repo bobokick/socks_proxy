@@ -25,6 +25,7 @@ void udpServer(int listen_port, std::string (*p_makeString) ())
         // @warning: 设置该属性时套接字要先开启并指定v6协议，且不能先绑定endpoint，否则会出错。
         socket.set_option(ip::v6_only(false));
         // 绑定endpoint
+        // @warning: 同种ip协议，同一ip地址下的所有进程的套接字都会关联唯一的端口和该端口对应的唯一io描述符。因此在同种ip协议，同一ip地址下不能有多个套接字使用相同的端口。
         socket.bind(udp::endpoint(udp::v6(), listen_port));
         // boost::asio::ip::v6_only option(false);
         // socket.get_option(option);

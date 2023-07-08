@@ -49,6 +49,7 @@ public:
     // 处理client请求（也就是发送数据到client）
     void addressRequest(std::string (*p_data_gen) ())
     {
+        // socket_.local_endpoint().port(4488);
         // @log for debug
         std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket_.native_handle();

@@ -16,7 +16,6 @@ void tcpClient(std::string server_host)
         // 输出连接请求相关信息
         std::cout << "ready for connecting " << server_host << "/13 using by daytime protocol\n";
         // 创建套接字
-        // @warning: 同一网络适配器，同种ip协议下的所有进程的套接字都会关联唯一的端口和该端口对应的唯一io描述符。因此在同一网络适配器，同种ip协议下不能有多个套接字使用相同的端口。
         tcp::socket socket(io_context);
         // 请求套接字连接
         // 可以自动检测ip版本如ipv4, ipv6进行连接。

@@ -16,7 +16,6 @@ void udpClient(std::string server_host)
         udp::endpoint receiver_endpoint = *(resolver.resolve(server_host, "daytime").begin());
         auto host_addr = ip::address::from_string(server_host);
         // 创建套接字
-        // @warning: 同一网络适配器，同种ip协议下的所有进程的套接字都会关联唯一的端口和该端口对应的唯一io描述符。因此在同一网络适配器，同种ip协议下不能有多个套接字使用相同的端口。
         udp::socket socket(io_context);
         // 发送数据前先指定网络层协议，否则无法进行发送。
         // 根据给定地址选择v4或v6协议。
@@ -24,7 +23,7 @@ void udpClient(std::string server_host)
         // 发送数据包到指定的udp端点
         // 由于udp是面向数据包类型，不是向tcp一样是流类型的套接字。所以不需要先进行握手，直接发送。
         // 该函数将会阻塞至成功发送数据或者出错。
-        socket.send_to(boost::asio::buffer("empty content."), receiver_endpoint);
+        socket.send_to(boost::asio::buffer("empty content.\n"), receiver_endpoint);
         // @log for debug
         std::string local_skt_info = socket.local_endpoint().address().to_string() + "/" + std::to_string(socket.local_endpoint().port());
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
