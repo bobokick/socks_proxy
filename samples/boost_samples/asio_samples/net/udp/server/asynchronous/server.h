@@ -15,6 +15,20 @@
 // #define _WIN32_WINNT 0x0A00
 #endif
 
+/**
+ * 
+ * @note: 
+ * 套接字通常意义指的就是网络连接（连接为点对点，全双工）的一个端点。
+ * 毎个套接字都有相应的套接字地址，是由一个因特网地址和一个16位的整数端口的元组对组成的，用(地址, 端口)来表示。
+ * 一个连接是由它两端的套接字地址唯一确定的。这对套接字地址叫做套接字对（socket pair), 由下列元组来表示：
+ * (cliaddr: cliport, servaddr: servport)
+ * @note:
+ * 套接字在程序代码的角度可以看作为包含一个给定套接字地址的文件描述符对象，用于进行一些IO操作。
+ * 由于同程序中文件描述符是唯一的，因此多个套接字不能含有同一个文件描述符。
+ * 多个套接字包含的套接字地址可以是一样的，但该操作只存在于监听套接字分发已连接套接字来进行并发通讯的情况。
+ * 不能主动将两个套接字的套接字地址设置成一样，因为设置为一样，就违反了连接点对点的性质，系统就无法确定该和谁通信。
+ */
+
 using boost::asio::ip::udp;
 
 // 生成daytime协议数据
@@ -113,6 +127,7 @@ public:
     {
         // @log for debug
         std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
+        // 获取套接字对应的文件描述符
         boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
         std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
         startReceive();
