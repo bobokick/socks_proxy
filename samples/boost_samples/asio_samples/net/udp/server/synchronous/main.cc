@@ -49,13 +49,13 @@ void udpServer(int listen_port, std::string (*p_makeString) ())
         std::string local_skt_info = (socket.local_endpoint().address().is_v4() ? socket.local_endpoint().address().to_v4().to_string(): socket.local_endpoint().address().to_v6().to_string())+ "/" + std::to_string(socket.local_endpoint().port());
         // 获取套接字对应的文件描述符
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
-        std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
         // 循环等待client的连接请求并发送数据
         while(true)
         {
             // 用于接收连接请求数据（也就是对所有向该端口发送udp数据的，都视为连接请求）
             std::vector<char> buff(128);
             // 输出等待连接请求信息
+            std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
             std::cout << "wait for connection request in port " << listen_port << std::endl;
             // 用于储存后续连接的client的udp端口相关信息。
             udp::endpoint remote_endpoint;

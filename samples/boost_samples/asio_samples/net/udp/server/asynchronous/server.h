@@ -113,6 +113,11 @@ class UdpServer
     // 异步接收client连接请求（也就是对所有向该端口发送udp数据的，都视为连接请求）
     void startReceive()
     {
+        // @log for debug
+        std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
+        // 获取套接字对应的文件描述符
+        boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
+        std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
         // 输出等待连接请求信息
         std::cout << "wait for connection request in port " << listen_port_ << std::endl;
         // 接收client的连接请求数据，并将其写入到buff。
@@ -125,11 +130,6 @@ public:
     // 创建udp套接字用于接收ipv4上给定端口的udp连接请求
     UdpServer(boost::asio::io_context& io_context, int listen_port, std::string (*p_data_gen) () = makeDaytimeString): socket_(io_context, udp::endpoint(udp::v4(), listen_port)), listen_port_(listen_port), p_data_gen_(p_data_gen), buff_(128)
     {
-        // @log for debug
-        std::string local_skt_info = socket_.local_endpoint().address().to_string() + "/" + std::to_string(socket_.local_endpoint().port());
-        // 获取套接字对应的文件描述符
-        boost::asio::detail::socket_type local_native_skt = socket_.native_handle();
-        std::cout << "server has a socket '" << local_skt_info << "/fd:" << local_native_skt << "' for sending data to client.\n";
         startReceive();
     }
 };

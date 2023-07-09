@@ -134,11 +134,11 @@ class TcpServer
         // 获取套接字对应的文件描述符
         boost::asio::detail::socket_type native_skt = acceptor_.native_handle();
         std::cout << "server has a listen socket '" << listen_skt_info << "/fd:" << native_skt << "' for listening connection.\n";
-        // 创建一个空的TCP套接字类对象，用于存储后续async_accept函数返回的已连接套接字。
+        // 创建一个tcp套接字，用于存储后续async_accept函数返回的已连接套接字。
         TcpConnection::TcpPointer new_connection = TcpConnection::create(io_context_);
         // 输出等待连接请求信息
         std::cout << "wait for connecting in port " << listen_port_ << std::endl;
-        // 等待客户端的连接请求，并在收到连接请求后，新建套接字与客户端套接字之间建立连接，并将新建的套接字存储到给定的TCP套接字类对象中。
+        // 等待客户端的连接请求，并在收到连接请求后，新建套接字与客户端套接字之间建立连接，并将新建的已连接套接字信息存储到给定的tcp套接字中。
         // 异步操作，此时不进行阻塞来等待client的连接请求。当调用该函数时，进行操作分发，并直接返回。
         // 后续在调用io.run()处进行阻塞等待，并在该套接字收到连接请求后进行tcp连接，并后续调用指定的函数（该例子指定的函数为TcpServer::handleAccept）来进行操作。
         acceptor_.async_accept(new_connection->getSocket(), std::bind(&TcpServer::handleAccept, this, new_connection, std::placeholders::_1));

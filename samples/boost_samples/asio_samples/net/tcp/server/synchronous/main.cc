@@ -44,19 +44,19 @@ void tcpServer(int listen_port, std::string (*p_makeString) ())
         std::string listen_skt_info = acceptor.local_endpoint().address().to_string() + "/" + std::to_string(acceptor.local_endpoint().port());
         // 获取套接字对应的文件描述符
         boost::asio::detail::socket_type native_skt = acceptor.native_handle();
-        std::cout << "server has a listen socket '" << listen_skt_info << "/fd:" << native_skt << "' for listening connection.\n";
         bool first = true;
         // 循环等待client的连接请求并发送数据
         while(true)
         {
-            // 创建一个空的TCP套接字类对象，用于存储后续accept函数返回的已连接套接字。
+            // 创建一个tcp套接字类对象，用于存储后续accept函数返回的已连接套接字。
             tcp::socket skt(io_context);
             // 输出等待连接请求信息
+            std::cout << "server has a listen socket '" << listen_skt_info << "/fd:" << native_skt << "' for listening connection.\n";
             std::cout << "wait for connecting in port " << listen_port << std::endl;
             // @warning: 因为acceptor设置了属性，默认下为主动套接字，要调用该函数变为监听套接字。
             acceptor.listen();
             // @warning: 只有监听套接字才能正常调用该操作，否则出错。
-            // 等待客户端的连接请求，并在收到连接请求后，新建套接字与客户端套接字之间建立连接，并将新建的套接字存储到给定的TCP套接字类对象中。
+            // 等待客户端的连接请求，并在收到连接请求后，新建套接字与客户端套接字之间建立连接，并将新建的已连接套接字信息存储到给定的tcp套接字中。
             // 同步操作，进行阻塞用于等待client的连接请求。
             acceptor.accept(skt);
             // @log log for debug
