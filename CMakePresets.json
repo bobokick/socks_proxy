@@ -1,18 +1,24 @@
 ﻿{
     "buildPresets": [
       {
-        "name": "windows-default",
-        "configurePreset": "windows-default"
+        "name": "windows_default",
+        "configurePreset": "windows_default"
       },
       {
-        "name": "windows-debug",
-        "configurePreset": "windows-debug",
-        "configuration": "Debug"
+        "name": "windows_debug",
+        "configurePreset": "windows_debug",
+        "configuration": "Debug",
+        "targets":[
+            "test_boost_nolib"
+        ]
       },
       {
-        "name": "windows-release",
-        "configurePreset": "windows-release",
-        "configuration": "Release"
+        "name": "windows_release",
+        "configurePreset": "windows_release",
+        "configuration": "Release",
+        "targets":[
+            "test_boost_nolib"
+        ]
       }
     ],
     "cmakeMinimumRequired": {
@@ -22,7 +28,7 @@
     },
     "configurePresets": [
       {
-        "name": "windows-default",
+        "name": "windows_default",
         "displayName": "windows default compile",
         "description": "windows 默认编译",
         "binaryDir": "${sourceDir}/build",
@@ -65,16 +71,32 @@
         }
       },
       {
-        "name": "windows-debug",
+        "name": "windows_msvc",
+        "displayName": "Windows x64 MSVC",
+        "description": "Windows x64 MSVC mode",
+        "inherits": "windows_default",
+        "generator": "Visual Studio 17 2022",
+        "architecture": {
+            "strategy": "external",
+            "value": "x64"
+        }
+      },
+      {
+        "name": "windows_mingw",
+        "displayName": "Windows x64 MinGW",
+        "description": "Windows x64 MinGW mode",
+        "inherits": "windows_default",
+        "generator": "MinGW Makefiles",
+        "architecture": {
+            "strategy": "external",
+            "value": "x64"
+        }
+      },
+      {
+        "name": "windows_debug",
         "displayName": "Windows x64 Debug",
         "description": "Windows x64 Debug mode",
-        "inherits": "windows-default",
-        "generator": "Visual Studio 16 2019",
-        // "generator": "MinGW Makefiles",
-        "architecture": {
-          "strategy": "external",
-          "value": "x64"
-        },
+        "inherits": "windows_msvc",
         "cacheVariables": {
           // 用于single-configuration generators (e.g. Makefile Generators or Ninja).
           "CMAKE_BUILD_TYPE": "Debug",
@@ -83,16 +105,10 @@
         }
       },
       {
-        "name": "windows-release",
+        "name": "windows_release",
         "displayName": "Windows x64 Release",
         "description": "Windows x64 Release mode",
-        "inherits": "windows-default",
-        "generator": "Visual Studio 16 2019",
-        // "generator": "MinGW Makefiles",
-        "architecture": {
-          "strategy": "external",
-          "value": "x64"
-        },
+        "inherits": "windows_msvc",
         "cacheVariables": {
           // 用于single-configuration generators (e.g. Makefile Generators or Ninja).
           "CMAKE_BUILD_TYPE": "Release",
@@ -103,8 +119,8 @@
     ],
     "testPresets": [
       {
-        "name": "windows-default",
-        "configurePreset": "windows-default",
+        "name": "windows_default",
+        "configurePreset": "windows_default",
         "output": { "outputOnFailure": true },
         "execution": {
           "noTestsAction": "error",
@@ -112,14 +128,14 @@
         }
       },
       {
-        "name": "windows-debug",
-        "configurePreset": "windows-debug",
-        "inherits": "windows-default"
+        "name": "windows_debug",
+        "configurePreset": "windows_debug",
+        "inherits": "windows_default"
       },
       {
-        "name": "windows-release",
-        "configurePreset": "windows-release",
-        "inherits": "windows-default"
+        "name": "windows_release",
+        "configurePreset": "windows_release",
+        "inherits": "windows_default"
       }
     ],
     "version": 2
