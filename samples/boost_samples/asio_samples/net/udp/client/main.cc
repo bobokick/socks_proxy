@@ -44,7 +44,7 @@ void udpClient(std::string server_host)
         boost::asio::detail::socket_type local_native_skt = socket.native_handle();
         std::cout << "client has a socket  '" << local_skt_info << "/fd:" << local_native_skt << "' for communicating with server.\n";
         // 输出等待接收daytime协议数据信息。
-        std::cout << "ready for receiving daytime data from " << server_host << ":13\n";
+        std::cout << "ready for receiving daytime data from " << server_host << "/13\n";
         // 用于接收数据
         std::vector<char> buff(128);
         // 用于储存后续接收到udp数据的发送方的udp端口相关信息。
