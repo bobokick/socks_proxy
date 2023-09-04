@@ -25,13 +25,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE 
-
+    ${BOOST_LIB_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     $<$<PLATFORM_ID:Linux>:dl>
-    # Boost::system
-    Boost::filesystem
+    boost_filesystem
 )
 
 add_dependencies(${PROJECT_NAME} 

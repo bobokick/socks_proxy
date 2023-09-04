@@ -13,10 +13,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${BOOST_INCLUDE_DIR}
 )
 target_link_directories(${PROJECT_NAME} PRIVATE 
-
+    ${BOOST_LIB_DIR}
 )
 target_link_libraries(${PROJECT_NAME} 
-    Boost::filesystem
+    boost_system
 )
 
 # 使用生成器表达式以及target_properties指定target生成的位置，

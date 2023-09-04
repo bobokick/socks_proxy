@@ -13,10 +13,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${BOOST_INCLUDE_DIR}
 )
 target_link_directories(${PROJECT_NAME} PRIVATE 
-
+    ${BOOST_LIB_DIR}
 )
 target_link_libraries(${PROJECT_NAME} 
-    Boost::filesystem
+    boost_system
 )
 # target_link_options(${PROJECT_NAME} PRIVATE
 #     -Wl,--no-undefined

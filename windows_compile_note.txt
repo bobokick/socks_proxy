@@ -1,5 +1,4 @@
 
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
--DCMAKE_CXX_COMPILER="" 
+cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER="gcc" -DCMAKE_CXX_COMPILER="g++" -G Ninja
 cmake --build . --config Release -v
