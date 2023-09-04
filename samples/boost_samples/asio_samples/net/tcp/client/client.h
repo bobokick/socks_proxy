@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
-#include <boost/array.hpp>
 #ifdef _WIN32
 #include <sdkddkver.h>
 // #define WINVER 0x0A00

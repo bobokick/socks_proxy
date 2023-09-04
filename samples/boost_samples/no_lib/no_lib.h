@@ -6,7 +6,6 @@
 #include <iterator>
 #include <algorithm>
 #include <boost/lexical_cast.hpp>
-#include <boost/lambda/lambda.hpp>
 
 double add(const std::string& int_num, const std::string& dou_num)
 {

@@ -19,7 +19,7 @@
     5. 在Visual Studio工具栏上选择 生成 -> 全部生成，等待生成完毕后，即构建完成。
 * 命令行操作：
     1. 打开命令行终端，切换到该项目的根目录路径，在其中创建build文件夹，并切换到该文件夹中。
-    2. 输入`cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release`进行构建文件生成。
-    3. 输入`cmake --build . --config Release -j -v`进行项目的构建，完毕后即构建完成。
+    2. 输入`cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CONFIGURATION_TYPES=Debug`进行构建文件生成。
+    3. 输入`cmake --build . --config Debug -j -v`进行项目的构建，完毕后即构建完成。
     <!-- 2. 输入`cmake -S . -B build --preset windows-release`进行构建文件生成。
     4. 构建文件生成完毕后，输入`cmake --build build --preset windows-release -j`进行项目的构建，完毕后即构建完成。 -->
