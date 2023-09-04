@@ -21,7 +21,7 @@ add_executable(${PROJECT_NAME} main.cc)
 # )
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${TP_ROOT_PATH}/boost_pure
+    ${BOOST_INCLUDE_DIR}
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE 

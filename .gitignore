@@ -1,8 +1,7 @@
 .vs
-# .vscode
-build/
-lib/
-!third_parties/**/build
-!third_parties/**/lib
+.vscode
+/build/
+/lib/
+!third_party/**/lib
 *autogen*
 .cache

@@ -8,12 +8,12 @@ set(COMPILE_FOLDERS
 
 
 # 设置boost安装路径
-set(BOOST_ROOT ${TP_ROOT_PATH}/boost_pure)
+set(BOOST_ROOT ${BOOST_ROOT_DIR})
 # 设置boost头文件存放路径
-set(BOOST_INCLUDEDIR ${TP_ROOT_PATH}/boost_pure)
+set(BOOST_INCLUDEDIR ${BOOST_INCLUDE_DIR})
 # 设置boost库文件存放路径
 # 必须添加，否则not found
-set(BOOST_LIBRARYDIR ${TP_ROOT_PATH}/boost_pure/build/${CMAKE_BUILD_TYPE}/lib)
+set(BOOST_LIBRARYDIR ${BOOST_LIB_DIR})
 # 设置是否使用boost静态库
 set(Boost_USE_STATIC_LIBS ON)
 # 设置是否使用多线程库
@@ -38,9 +38,9 @@ find_package(Boost 1.76.0 REQUIRED
    COMPONENTS system filesystem
    )
 if(Boost_FOUND)
-   include_directories(${Boost_INCLUDE_DIRS})
+#    include_directories(${Boost_INCLUDE_DIRS})
+#    link_directories(${Boost_LIBRARY_DIRS})
    message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
-   link_directories(${Boost_LIBRARY_DIRS})
    message(STATUS "Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")
    message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
 endif()
