@@ -12,8 +12,8 @@
 #include <Windows.h>
 #define BOOST_LIB_PATH "@BOOST_LIB_DIR@"
 #define SET_DLL_FIND_DIR(PATH) SetDllDirectory(PATH)
-#define MAKETOOL_IS_@MAKE_TOOL@
-#ifdef MAKETOOL_IS_MSBuild
+#define CPP_COMPILER_IS_@CMAKE_CXX_COMPILER_ID@
+#ifdef CPP_COMPILER_IS_MSVC
 /// 库文件1的路径
 #define LIB1_PATH "@CMAKE_BINARY_DIR@/lib/boostdll_test_lib1.dll"
 /// 库文件2的路径

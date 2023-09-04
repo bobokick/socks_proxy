@@ -46,6 +46,6 @@ macro(auto_import_libs_in_dir need_imported_libs_dir lib_suffix regex_list repla
             PROPERTIES IMPORTED_LOCATION ${need_imported_libs_dir}/${lib_original_name}
         )
         # @debug
-        message(STATUS "-----IMPORTED LIBRARY: '${lib_name}'\tTHE IMPORTED_LOCATION: '${need_imported_libs_dir}/${lib_original_name}'-----")
+        # message(STATUS "-----IMPORTED LIBRARY: '${lib_name}'\tTHE IMPORTED_LOCATION: '${need_imported_libs_dir}/${lib_original_name}'-----")
     endforeach()
 endmacro()

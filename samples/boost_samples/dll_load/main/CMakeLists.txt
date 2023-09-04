@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/lib_path_macro.h.in
     
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib_path_autogen.h
+    ${CMAKE_BINARY_DIR}/include/lib_path_autogen.h
     @ONLY
 )
 
@@ -22,6 +22,7 @@ add_executable(${PROJECT_NAME} main.cc)
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${BOOST_INCLUDE_DIR}
+    ${CMAKE_BINARY_DIR}/include
 )
 
 target_link_directories(${PROJECT_NAME} PRIVATE 

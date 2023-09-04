@@ -8,6 +8,14 @@ if(WIN32)
     set(toolset "msvc")
     if("${CMAKE_CXX_COMPILER}" MATCHES ".*/g\\+\\+\\.exe")
         set(toolset "mingw")
+        # boost asio中会使用
+        # 显式连接winsock的库文件，因为#pragma lib对于mingw不生效
+        link_libraries(ws2_32 wsock32)
+    else()
+        # 使用msvc时，禁止boost头文件中使用#pragma lib来连接boost库
+        add_compile_definitions(
+            BOOST_ALL_NO_LIB
+        )
     endif()
     set(library_type "static")
     set(build_type "${CMAKE_BUILD_TYPE}")
@@ -17,10 +25,6 @@ if(WIN32)
     set(BOOST_INCLUDE_DIR ${BOOST_ROOT_DIR}/include)
     set(BOOST_LIB_DIR ${BOOST_ROOT_DIR}/lib/${host_os}/${toolset}/${library_type}/${build_type})
     # message(STATUS "---BOOST_LIB_DIR: ${BOOST_LIB_DIR}---")
-    # 在windows上禁用#pragma lib自动链接boost库
-    add_compile_definitions(
-        BOOST_ALL_NO_LIB
-    )
     # 导入所有boost库，使项目在`target_link_libraries`中可以直接写库名(不管前后缀、路径)就能使用。
     if("${toolset}" MATCHES "mingw")
         set(lib_suffix "*.a")
