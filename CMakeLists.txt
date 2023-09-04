@@ -23,7 +23,7 @@ set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(CXX_STANDARD 17)
 
 string(REGEX REPLACE "^.*/" "" MAKE_TOOL "${CMAKE_MAKE_PROGRAM}")
-string(REGEX REPLACE "\.exe" "" MAKE_TOOL "${MAKE_TOOL}")
+string(REGEX REPLACE "\\.exe" "" MAKE_TOOL "${MAKE_TOOL}")
 message(STATUS "MAKE_TOOL: ${MAKE_TOOL}")
 
 # 包含三方库路径

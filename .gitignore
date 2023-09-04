@@ -1,7 +1,13 @@
-.vs
-.vscode
-/build/
-/lib/
+.vs*
+.vscode*
+/build*/
+/lib*/
 !third_party/**/lib
 *autogen*
 .cache
+/*.log
+/*.obj
+/*.o
+/*.lib
+/*.so
+/*.dll

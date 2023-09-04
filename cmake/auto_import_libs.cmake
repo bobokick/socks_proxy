@@ -1,11 +1,13 @@
 
-# 导入${need_imported_libs_dir}目录中的所有后缀为lib的项，使项目在`target_link_libraries`中可以直接写库名(不管前后缀、路径)就能使用。
-# need_imported_libs_dir: 需要进行导入的库的目录，里面的库都会被导入
+# 导入${need_imported_libs_dir}目录中的所有后缀为${lib_suffix}的项，使项目在`target_link_libraries`中可以直接写库名(不管前后缀、路径)就能使用。
+# need_imported_libs_dir: 需要进行导入的库的目录，里面的库所有后缀为${lib_suffix}的项都会被导入
+# lib_suffix: 需要导入的所有库的后缀。
 # regex_list: 需要进行处理的库名称的正则表达式列表。
 # replace_expression_list: 替换regex匹配到的表达式的字符串的列表。列表中的每个元素会与regex_list的对应位置的元素进行匹配替换。
-macro(auto_import_libs_in_dir need_imported_libs_dir regex_list replace_expression_list)
+macro(auto_import_libs_in_dir need_imported_libs_dir lib_suffix regex_list replace_expression_list)
     # @debug
     # message(STATUS "---INIT need_imported_libs_dir: ${need_imported_libs_dir}")
+    # message(STATUS "---INIT lib_suffix: ${lib_suffix}")
     # message(STATUS "---INIT regex_list: ${regex_list}")
     # message(STATUS "---INIT replace_expression_list: ${replace_expression_list}")
     # 获取给定目录中的所有lib
@@ -13,7 +15,7 @@ macro(auto_import_libs_in_dir need_imported_libs_dir regex_list replace_expressi
         LIST_DIRECTORIES false
         RELATIVE ${need_imported_libs_dir}
         CONFIGURE_DEPENDS
-        ${need_imported_libs_dir}/*.lib
+        ${need_imported_libs_dir}/${lib_suffix}
     )
     # 每个库进行字符串处理并导入
     foreach(lib_original_name ${ALL_ORIGIN_LIBS})
@@ -44,6 +46,6 @@ macro(auto_import_libs_in_dir need_imported_libs_dir regex_list replace_expressi
             PROPERTIES IMPORTED_LOCATION ${need_imported_libs_dir}/${lib_original_name}
         )
         # @debug
-        # message(STATUS "-----IMPORTED LIBRARY: '${lib_name}'\tTHE IMPORTED_LOCATION: '${need_imported_libs_dir}/${lib_original_name}'-----")
+        message(STATUS "-----IMPORTED LIBRARY: '${lib_name}'\tTHE IMPORTED_LOCATION: '${need_imported_libs_dir}/${lib_original_name}'-----")
     endforeach()
 endmacro()
