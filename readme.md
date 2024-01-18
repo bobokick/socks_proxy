@@ -24,8 +24,10 @@
        mkdir build
        cd socks_proxy/build
        # intel:
+       "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"
        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_C_COMPILER=icl -DCMAKE_CXX_COMPILER=icl -G Ninja
        # msvc:
+       "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl
        # mingw:
        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES=Release -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja

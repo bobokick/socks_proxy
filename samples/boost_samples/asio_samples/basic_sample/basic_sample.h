@@ -2,6 +2,7 @@
 #define BOOST_ASIO_SAMPLE_BASIC_H_
 
 #include <iostream>
+#include <deque>
 #include <string>
 #include <chrono>
 #include <vector>
@@ -18,7 +19,7 @@ void usingTimerSynchronously()
     // 使用asio的都需要至少一个IO执行上下文，如io_context或者thread_pool对象。
     boost::asio::io_context io;
     // 注意：过期时间从计时器建立就开始计时。
-    boost::asio::steady_timer t(io, std::chrono::seconds(5));
+    boost::asio::basic_waitable_timer<std::chrono::steady_clock> t(io, std::chrono::seconds(5));
     std::cout << "start wait for the timer expiration!" << std::endl;
     t.wait();
     std::cout << "waited completed. Hello, usingTimerSynchronously!" << std::endl;
@@ -30,7 +31,7 @@ void usingTimerAsynchronously()
     auto print = [] (const boost::system::error_code& )
     { std::cout << "Hello, usingTimerAsynchronously!" << std::endl; };
     boost::asio::io_context io;
-    boost::asio::steady_timer t(io, std::chrono::seconds(5));
+    boost::asio::basic_waitable_timer<std::chrono::steady_clock> t(io, std::chrono::seconds(5));
     // 进行异步等待，直接进行返回
     t.async_wait(print);
     std::cout << "start wait for the timer expiration!" << std::endl;
@@ -44,7 +45,7 @@ void bindingArgsToCompletionHandler()
     // 可调用类
     struct Print
     {
-        void operator()(const boost::system::error_code&, boost::asio::steady_timer& timer, int& count) const
+        void operator()(const boost::system::error_code&, boost::asio::basic_waitable_timer<std::chrono::steady_clock>& timer, int& count) const
         {
             if (count < 5)
             {
@@ -60,7 +61,7 @@ void bindingArgsToCompletionHandler()
     };
     int count = 0;
     boost::asio::io_context io;
-    boost::asio::steady_timer t(io, std::chrono::seconds(1));
+    boost::asio::basic_waitable_timer<std::chrono::steady_clock> t(io, std::chrono::seconds(1));
     // 用std::ref是用于引用传递，否则只是值传递
     t.async_wait(std::bind(Print{}, std::placeholders::_1, std::ref(t), std::ref(count)));
     std::cout << "start wait for the timer expiration!" << std::endl;
@@ -72,7 +73,7 @@ void usingMemberFunctionAsCompletionHandler()
 {
     class Printer
     {
-        boost::asio::steady_timer timer_;
+        boost::asio::basic_waitable_timer<std::chrono::steady_clock> timer_;
         int count_;
     public:
         void print()
@@ -109,7 +110,7 @@ void synchronisingCompletionHandlersInMultithreadedPrograms()
         int timer_number_;
         int total_timer_count_max_;
         int count_;
-        std::vector<boost::asio::steady_timer> timer_list_;
+        std::deque<boost::asio::basic_waitable_timer<std::chrono::steady_clock>> timer_list_;
     public:
         void print(int number)
         {
