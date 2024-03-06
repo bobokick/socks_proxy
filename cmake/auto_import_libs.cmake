@@ -1,9 +1,13 @@
 
 # 导入${need_imported_libs_dir}目录中的所有后缀为${lib_suffix}的项，使项目在`target_link_libraries`中可以直接写库名(不管前后缀、路径)就能使用。
-# need_imported_libs_dir: 需要进行导入的库的目录，里面的库所有后缀为${lib_suffix}的项都会被导入
+# need_imported_libs_dir: 需要进行导入的库的目录，里面的库所有后缀为<lib_suffix>的项都会被导入
 # lib_suffix: 需要导入的所有库的后缀。
 # regex_list: 需要进行处理的库名称的正则表达式列表。
-# replace_expression_list: 替换regex匹配到的表达式的字符串的列表。列表中的每个元素会与regex_list的对应位置的元素进行匹配替换。
+# replace_expression_list: 替换regex正则表达式匹配到的表达式的字符串的列表。列表中的每个元素会与<regex_list>的对应位置的元素进行匹配替换。
+# 函数处理流程: 
+# 1. 在<need_imported_libs_dir>目录中找到所有以<lib_suffix>为后缀的文件。
+# 2. 对于上一步找到的每一个文件，根据<regex_list>和<replace_expression_list>列表中提供的正则模式串和替换串，将该文件名按列表索引，依次循环的进行正则查找并替换。
+# 3. 最终替换完毕后形成的文件名字符串将会为该库的cmake导入库名，导入库路径对应该库的绝对路径。
 macro(auto_import_libs_in_dir need_imported_libs_dir lib_suffix regex_list replace_expression_list)
     # @debug
     # message(STATUS "---INIT need_imported_libs_dir: ${need_imported_libs_dir}")
