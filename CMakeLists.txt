@@ -45,7 +45,7 @@ message(STATUS "CMAKE_CXX_IMPLICIT_LINK_LIBRARIES: ${CMAKE_CXX_IMPLICIT_LINK_LIB
 
 # --------------构建项目设置-------------
 
-# gtest编译示例测试
+# 编译示例测试
 add_subdirectory(samples)
 
 message(STATUS "\tentering the dir: ${CMAKE_CURRENT_SOURCE_DIR}")
